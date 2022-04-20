@@ -100,7 +100,7 @@ public class StatTrackerGUIController implements Initializable {
      * Avaa uuden profiilin
      */
     @FXML private void handleAvaa() {
-        Dialogs.showMessageDialog("Ei osata avata");
+        avaa();
     }
     
     /**
@@ -162,7 +162,7 @@ public class StatTrackerGUIController implements Initializable {
             Dialogs.showMessageDialog("Virhe uuden luomisessa: " + e.getMessage());
             return;
         }
-        hae(hahmo.getTunnusNro());
+        hae(hahmo.getHid());
     }
     
     /**
@@ -173,8 +173,8 @@ public class StatTrackerGUIController implements Initializable {
         if (hahmoKohdalla == null) return;
         Build build = new Build();
         profiili.LisaaBuild(build);
-        profiili.LisaaHahmolleBuild(hahmoKohdalla.getTunnusNro(), build.getBid());
-        hae(hahmoKohdalla.getTunnusNro());
+        profiili.LisaaHahmolleBuild(hahmoKohdalla.getHid(), build.getBid());
+        hae(hahmoKohdalla.getHid());
         } catch (SailoException e) {
             Dialogs.showMessageDialog(e.getMessage());
         }
@@ -204,7 +204,7 @@ public class StatTrackerGUIController implements Initializable {
         }
         areaBuild.setText("");
         try (PrintStream os = TextAreaOutputStream.getTextPrintStream(areaBuild)){
-            hid = hahmoKohdalla.getTunnusNro();
+            hid = hahmoKohdalla.getHid();
             List<Integer> buildit = profiili.annaHahmonBuildit(hid);
             if (buildit.isEmpty()) return;
             profiili.tulostaBuildit(buildit, os);
@@ -222,11 +222,22 @@ public class StatTrackerGUIController implements Initializable {
         int index = 0;
         for (int i = 0; i < profiili.getHahmoja(); i++) {
             Hahmo hahmo = profiili.annaHahmo(i);
-            if (hahmo.getTunnusNro() == tunnusNro) index = i;
+            if (hahmo.getHid() == tunnusNro) index = i;
             chooserHahmot.add(hahmo.getNimi(), hahmo);
         }
         chooserHahmot.getSelectionModel().clearAndSelect(index);
         
+    }
+
+    /**
+     * Metodi joka varmistaa että profiili avataan
+     * @return False jos käyttäjä peruu profiilin avaamisen
+     */
+    public static boolean avaa() {
+        String profiiliNimi = AvaaController.kysyProfiili(null, "exampleProfile");
+        if (profiiliNimi == null) return false;
+        // lueTiedosto(profiiliNimi);
+        return true;
     }
     
     

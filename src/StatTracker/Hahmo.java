@@ -1,6 +1,7 @@
 package StatTracker;
 
 import java.io.PrintStream;
+import java.util.Random;
 
 /**
  * 
@@ -20,15 +21,34 @@ public class Hahmo {
     
     
     /**
-     * Luo oletushahmon ilman parametreja. Tehty vaihetta 5 varten.
+     * Luo oletushahmon ilman parametreja randomisoimalla hahmon sisällön. Tehty testaamista varten.
      */
     public Hahmo() {
-    hid = rekisteroi();
-    nimi = "Widowmaker";
-    tapot = 58;
-    kuolemat = 12;
-    voitot = 14;
-    haviot = 14;
+        Random rand = new Random();
+        String[] hahmoLista = {"Sigma", "Roadhog", "Junkrat", "Widowmaker", "Ashe", "Bastion", "Cassidy"};
+        nimi = hahmoLista[rand.nextInt(hahmoLista.length)];
+        tapot = rand.nextInt(150);
+        kuolemat = rand.nextInt(150);
+        voitot = rand.nextInt(150);
+        haviot = rand.nextInt(150);
+        hid = rekisteroi();
+    }
+    
+    /**
+     * Luo hahmon annetuilla parametreilla
+     * @param nimi Hahmon nimi
+     * @param voitot Hahmon voitot
+     * @param haviot Hahmon häviöt
+     * @param tapot Hahmon tapot
+     * @param kuolemat Hahmon kuolemat
+     */
+    public Hahmo(String nimi, int voitot, int haviot, int tapot, int kuolemat) {
+        this.nimi = nimi;
+        this.voitot = voitot;
+        this.haviot = haviot;
+        this.tapot = tapot;
+        this.kuolemat = kuolemat;
+        hid = rekisteroi();
         
     }
     
@@ -38,18 +58,17 @@ public class Hahmo {
      * @example tämän ohjelman versiossa itse rekisteröinti tapahtuu jo hahmon luonnissa
      * <pre name="test">
      * Hahmo hahmo1 = new Hahmo();
-     * hahmo1.getTunnusNro() === 1;
+     * hahmo1.getHid() === hahmo1.getSeuraavaHid()-1;
      * Hahmo hahmo2 = new Hahmo();
-     * int n1 = hahmo1.getTunnusNro();
-     * int n2 = hahmo2.getTunnusNro();
-     * n1 === n2-1;
+     * hahmo2.getHid() === hahmo2.getSeuraavaHid()-1;
+     * hahmo1.getHid() === hahmo2.getHid()-1;
      * 
      * </pre>
      */
-    public int rekisteroi() {
-        hid = seuraava_hid;
+    private int rekisteroi() {
+        this.hid = seuraava_hid;
         seuraava_hid++;
-        return hid;
+        return this.hid;
     }
 
     /**
@@ -74,8 +93,16 @@ public class Hahmo {
      * Get-metodi hahmon tunnusnumeron saamiseksi
      * @return hahmon tunnusnumeron
      */
-    public int getTunnusNro() {
+    public int getHid() {
         return hid;
+    }
+    
+    /**
+     * Get-metodi seuraavan luotavan hahmon id-numerolle. Luotu lähinnä Junit-testeille ettei tarvitse pitää seuraava_hid attribuuttia public näkyvyydellä.
+     * @return Seuraavan luotavan hahmon id(Hid).
+     */
+    public int getSeuraavaHid() {
+        return seuraava_hid;
     }
     
 }

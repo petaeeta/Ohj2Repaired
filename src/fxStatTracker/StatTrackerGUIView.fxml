@@ -18,7 +18,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxStatTracker.StatTrackerGUIController">
+<BorderPane xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxStatTracker.StatTrackerGUIController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -84,16 +84,16 @@
             </BorderPane>
          </center>
          <bottom>
-            <HBox prefWidth="80.0" BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER" spacing="5.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="uusihahmo" mnemonicParsing="false" onMouseClicked="#handleUusiHahmo" text="Uusi hahmo">
+                  <Button fx:id="uusihahmo" mnemonicParsing="false" onMouseClicked="#handleUusiHahmo" text="Uusi hahmo" HBox.hgrow="SOMETIMES">
                      <HBox.margin>
-                        <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                        <Insets />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="poistahahmo" mnemonicParsing="false" onMouseClicked="#handlePoistaHahmo" text="Poista hahmo">
+                  <Button fx:id="poistahahmo" mnemonicParsing="false" onMouseClicked="#handlePoistaHahmo" text="Poista hahmo" HBox.hgrow="SOMETIMES">
                      <HBox.margin>
-                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                        <Insets />
                      </HBox.margin>
                   </Button>
                </children>
@@ -105,26 +105,26 @@
       </BorderPane>
    </left>
    <center>
-      <ScrollPane fitToWidth="true" BorderPane.alignment="CENTER">
+      <ScrollPane fitToHeight="true" fitToWidth="true" BorderPane.alignment="CENTER">
          <content>
             <BorderPane>
                <center>
-                  <ScrollPane fx:id="panelHahmo">
+                  <ScrollPane fx:id="panelHahmo" fitToWidth="true" pannable="true" BorderPane.alignment="CENTER">
                      <content>
-                        <GridPane hgap="10.0">
+                        <GridPane gridLinesVisible="true">
                           <columnConstraints>
-                            <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="60.0" />
-                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" />
+                            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="60.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" />
                           </columnConstraints>
                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="50.0" prefHeight="120.0" vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                            <RowConstraints vgrow="SOMETIMES" />
+                            <RowConstraints vgrow="SOMETIMES" />
+                            <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
+                              <RowConstraints vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
                               <Label text="Tapot:" GridPane.rowIndex="1" />
@@ -140,13 +140,13 @@
                               <TextField editable="false" text="2" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                               <TextField editable="false" text="2" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                               <Label text="Buildit:" GridPane.rowIndex="7" />
-                              <TextArea editable="false" prefHeight="200.0" prefWidth="200.0" text="Pirateship&#10;Comp-build&#10;2-2-2" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                              <TextArea editable="false" text="Pirateship&#10;Comp-build&#10;2-2-2" GridPane.columnIndex="1" GridPane.rowIndex="7">
                                  <GridPane.margin>
                                     <Insets bottom="3.0" />
                                  </GridPane.margin>
                               </TextArea>
                               <Label text="HAHMO:" />
-                              <TextField text="WIDOWMAKER" GridPane.columnIndex="1" />
+                              <TextField editable="false" text="WIDOWMAKER" GridPane.columnIndex="1" />
                            </children>
                            <padding>
                               <Insets left="10.0" right="10.0" top="10.0" />
@@ -156,7 +156,7 @@
                   </ScrollPane>
                </center>
                <bottom>
-                  <HBox alignment="CENTER" minWidth="200.0" prefHeight="50.0" BorderPane.alignment="CENTER">
+                  <HBox alignment="CENTER" BorderPane.alignment="CENTER">
                      <children>
                         <Button fx:id="muokkaahahmo" mnemonicParsing="false" onMouseClicked="#handleHahmonTilastoja" text="Muokkaa hahmon tilastoja">
                            <HBox.margin>
@@ -169,6 +169,9 @@
                            </HBox.margin>
                         </Button>
                      </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
                   </HBox>
                </bottom>
             </BorderPane>
@@ -176,7 +179,7 @@
       </ScrollPane>
    </center>
    <bottom>
-      <BorderPane prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <BorderPane BorderPane.alignment="CENTER">
          <top>
             <TextField alignment="CENTER" editable="false" text="OVERALL TILASTOT" BorderPane.alignment="CENTER">
                <font>
@@ -185,12 +188,12 @@
             </TextField>
          </top>
          <center>
-            <GridPane BorderPane.alignment="CENTER">
+            <GridPane hgap="2.0" vgap="2.0" BorderPane.alignment="CENTER">
               <columnConstraints>
-                <ColumnConstraints minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -213,9 +216,9 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <TextField text="10" GridPane.columnIndex="1" />
-                  <TextField text="5" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextField text="2" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField editable="false" text="10" GridPane.columnIndex="1" />
+                  <TextField editable="false" text="5" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField editable="false" text="2" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label text="Tapot:" GridPane.columnIndex="2">
                      <font>
                         <Font name="System Bold" size="12.0" />
@@ -238,8 +241,8 @@
                         <Insets left="2.0" />
                      </padding>
                   </Label>
-                  <TextField text="10" GridPane.columnIndex="3" />
-                  <TextField text="5" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                  <TextField editable="false" text="10" GridPane.columnIndex="3" />
+                  <TextField editable="false" text="5" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                   <Label text="K/D-ratio:" GridPane.columnIndex="2" GridPane.rowIndex="2">
                      <font>
                         <Font name="System Bold" size="12.0" />
@@ -251,7 +254,7 @@
                         <Insets left="2.0" />
                      </GridPane.margin>
                   </Label>
-                  <TextField text="2" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                  <TextField editable="false" text="2" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                </children>
                <BorderPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -259,14 +262,14 @@
             </GridPane>
          </center>
          <padding>
-            <Insets bottom="2.0" left="2.0" right="2.0" top="3.0" />
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </padding>
          <bottom>
-            <HBox alignment="CENTER" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            <HBox alignment="CENTER" BorderPane.alignment="CENTER" />
          </bottom>
       </BorderPane>
    </bottom>
    <right>
-      <ScrollPane fx:id="panelBuild" minWidth="250.0" BorderPane.alignment="CENTER" />
+      <ScrollPane fx:id="panelBuild" fitToHeight="true" fitToWidth="true" minWidth="300.0" pannable="true" BorderPane.alignment="CENTER" />
    </right>
 </BorderPane>

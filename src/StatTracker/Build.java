@@ -31,17 +31,25 @@ public class Build {
         return bid;
     }
     
+    
+    /**
+     * Get-metodi seuraavan luotavan buildin id-numerolle. Luotu lähinnä Junit-testeille ettei tarvitse pitää seuraava_bid attribuuttia public näkyvyydellä.
+     * @return Seuraavan luotavan buildin id(Bid).
+     */
+    public int getSeuraavaBid() {
+        return seuraava_bid;
+    }
+    
     /**
      * Palauttaa seuraavan build-id:n, kun uusi buildi luodaan
      * @return uuden build-id:n
      * @example
      * <pre name="test">
      * Build build1 = new Build();
-     * build1.getBid() === 1;
+     * build1.getBid() === build1.getSeuraavaBid()-1;
      * Build build2 = new Build();
-     * int n1 = build1.getBid();
-     * int n2 = build2.getBid();
-     * n1 === n2-1;
+     * build2.getBid() === build2.getSeuraavaBid()-1;
+     * build1.getBid() === build2.getBid()-1;
      * </pre>
      */
     private int rekisteroi() {
