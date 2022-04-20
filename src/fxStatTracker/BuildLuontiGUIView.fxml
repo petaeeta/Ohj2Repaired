@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxStatTracker.BuildLuontiController">
+   <center>
+      <GridPane BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="NEVER" minWidth="-Infinity" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label alignment="CENTER" text="Anna buildille nimi:" />
+            <TextField text="Esimerkkinimi" GridPane.columnIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextField>
+            <Label text="Kuvaus buildista" GridPane.rowIndex="1" />
+            <TextArea prefHeight="200.0" prefWidth="200.0" text="Tätä buildia käytetään, kun&#10;ei enää osata tehdä muuta" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </GridPane.margin>
+            </TextArea>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+         </BorderPane.margin>
+      </GridPane>
+   </center>
+   <bottom>
+      <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <buttons>
+          <Button fx:id="tallenna" mnemonicParsing="false" onAction="#handleBuildTallenna" text="Tallenna" />
+            <Button mnemonicParsing="false" onAction="#handleBuildperuuta" text="Peruuta" />
+        </buttons>
+         <BorderPane.margin>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+         </BorderPane.margin>
+      </ButtonBar>
+   </bottom>
+   <top>
+      <Label text="Buildin luonti" BorderPane.alignment="CENTER">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+         <BorderPane.margin>
+            <Insets bottom="8.0" left="2.0" right="2.0" top="2.0" />
+         </BorderPane.margin>
+      </Label>
+   </top>
+</BorderPane>
