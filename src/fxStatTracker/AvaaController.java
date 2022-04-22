@@ -1,6 +1,11 @@
 package fxStatTracker;
 
-import fi.jyu.mit.fxgui.ModalControllerInterface;;
+import fi.jyu.mit.fxgui.ModalController;
+import fi.jyu.mit.fxgui.ModalControllerInterface;
+import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 
 /**
@@ -8,25 +13,53 @@ import fi.jyu.mit.fxgui.ModalControllerInterface;;
  * toteutetaan kun tietoa oikeasti kirjoitetaan ylös, mikäli päätetään tehdä lukuisia profiileja yhden sijasta.
  * @author Petteri
  * @version 14.2.2019
+ * @version 21.4.2022
  */
 public class AvaaController implements ModalControllerInterface<String> {
 
+    @FXML private TextField textUusiProfiili;
+    @FXML private ComboBox<String> comboboxProfiili;
+    
+    @FXML private void handleUusiProfiili() {
+        vastaus = textUusiProfiili.getText();
+        ModalController.closeStage(textUusiProfiili);
+    }
+    
+    @FXML private void handleValitseProfiili() {
+        ModalController.closeStage(textUusiProfiili);
+    }
+    
+    @FXML private void handlePeruuta() {
+        ModalController.closeStage(textUusiProfiili);
+    }
+    
+    //================================================================================================================
+    private String vastaus = null;
+    
     @Override
     public String getResult() {
-        // TODO Auto-generated method stub
-        return null;
+        return vastaus;
     }
 
     @Override
     public void handleShown() {
-        // TODO Auto-generated method stub
-        
+        textUusiProfiili.requestFocus();
     }
 
     @Override
-    public void setDefault(String arg0) {
-        // TODO Auto-generated method stub
+    public void setDefault(String oletus) {
+        textUusiProfiili.setText(oletus);
         
+    }
+    
+    /**
+     * Käyttäjältä kysytään profiili
+     * @param modalityStage jonka suhteen ollaan modaalisia. Jos null, ollaan modaalisia koko sovellukselle.
+     * @param oletus oletusnimi profiilille
+     * @return null jos käyttäjä painaa cancel, profiilin nimi jos käyttäjä sen syöttää
+     */
+    public static String kysyProfiili(Stage modalityStage, String oletus) {
+        return ModalController.showModal(AvaaController.class.getResource("AvaaGUIView.fxml"), "Profile 1", modalityStage, oletus);
     }
    
 

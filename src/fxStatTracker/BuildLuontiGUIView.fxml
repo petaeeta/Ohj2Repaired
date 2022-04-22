@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxStatTracker.BuildLuontiController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxStatTracker.BuildLuontiController">
    <center>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -45,8 +45,8 @@
    <bottom>
       <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <buttons>
-          <Button fx:id="tallenna" mnemonicParsing="false" onAction="#handleBuildTallenna" text="Tallenna" />
-            <Button mnemonicParsing="false" onAction="#handleBuildperuuta" text="Peruuta" />
+          <Button fx:id="tallenna" defaultButton="true" mnemonicParsing="false" onAction="#handleBuildTallenna" text="Tallenna" />
+            <Button cancelButton="true" mnemonicParsing="false" onAction="#handleBuildperuuta" text="Peruuta" />
         </buttons>
          <BorderPane.margin>
             <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

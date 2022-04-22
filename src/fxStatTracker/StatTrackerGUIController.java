@@ -12,18 +12,36 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
 
 /**
  * kontrolleri StatTrackerin p‰‰ikkunalle
  * @author petteri
  * @version 14.2.2019
+ * @version 22.4.2022
  *
  */
 public class StatTrackerGUIController implements Initializable {
     @FXML private ScrollPane panelHahmo;
     @FXML private ScrollPane panelBuild;
     @FXML private ListChooser<Hahmo> chooserHahmot;
+    @FXML private ListChooser<Build> chooserBuildit;
+    @FXML private TextField nimiField;
+    @FXML private TextField tapotField;
+    @FXML private TextField kuolematField;
+    @FXML private TextField voitotField;
+    @FXML private TextField haviotField;
+    @FXML private TextField kdField;
+    @FXML private TextField wlField;
+    @FXML private TextArea buildInfo;
+    @FXML private TextArea builditField;
+    @FXML private TextField overallVoitot;
+    @FXML private TextField overallHaviot;
+    @FXML private TextField overallTapot;
+    @FXML private TextField overallKuolemat;
+    @FXML private TextField overallWl;
+    @FXML private TextField overallKd;
     
     /**
      * Uuden hahmon k‰sittely
@@ -50,9 +68,14 @@ public class StatTrackerGUIController implements Initializable {
      * Buildien hallinta
      */
     @FXML private void handleBuild() {
-        uusiBuild();
+        ModalController.showModal(StatTrackerGUIController.class.getResource("BuildLuontiGUIView.fxml"), "", null, "");
+        //uusiBuild();
+        uusiTemplateBuild();
        }
     
+    @FXML private void assignBuild() {
+        annaHahmolleBuild();
+    }
 
     /**
      * Nollaa profiilin tiedot, mutta s‰‰st‰‰ hahmot sek‰ buildit, jotka pit‰‰ itse k‰yd‰ poistamassa.
@@ -100,7 +123,7 @@ public class StatTrackerGUIController implements Initializable {
      * Avaa uuden profiilin
      */
     @FXML private void handleAvaa() {
-        Dialogs.showMessageDialog("Ei osata avata");
+        avaa();
     }
     
     /**
@@ -108,6 +131,13 @@ public class StatTrackerGUIController implements Initializable {
      */
     @FXML private void handlePoistu() {
         Platform.exit();
+    }
+    
+    /**
+     * Poistaa buildin
+     */
+    @FXML private void handlePoistaBuild() {
+        Dialogs.showMessageDialog("Ei osata poistaa");
     }
 
     /**
@@ -125,31 +155,47 @@ public class StatTrackerGUIController implements Initializable {
 
 
     
-//===========================================================================    
+//===============================================================================================================
     private Profiili profiili;
-    private TextArea areaHahmo = new TextArea();
-    private TextArea areaBuild = new TextArea();
+    //private TextArea areaHahmo = new TextArea();
+    //private TextArea areaBuild = new TextArea();
     private Hahmo hahmoKohdalla;
+    private Build buildKohdalla;
     private int hid;
 
     @Override
     public void initialize(URL url, ResourceBundle bundle) {
         alusta();
-        
     }
 
     private void alusta() {
-        panelHahmo.setContent(areaHahmo);
-        panelBuild.setContent(areaBuild);
-        areaHahmo.setFont(new Font("Courier New", 12));
-        areaBuild.setFont(new Font("Courier New", 12));
+        //panelHahmo.setContent(areaHahmo);
+        //panelBuild.setContent(areaBuild);
+        //areaHahmo.setFont(new Font("Courier New", 12));
+        //areaBuild.setFont(new Font("Courier New", 12));
         panelHahmo.setFitToHeight(true);
         panelBuild.setFitToHeight(true);
         
         chooserHahmot.clear();
         chooserHahmot.addSelectionListener(e -> naytaHahmo());
         
+        chooserBuildit.clear();
+        chooserBuildit.addSelectionListener(e -> naytaBuild());
     }
+    
+    /*
+     * P‰ivitt‰‰ overall-tilastot
+     */
+    private void updateOverall() {
+        int[] tilastot = profiili.getOverallTilastot();
+        overallVoitot.setText(Integer.toString(tilastot[0]));
+        overallHaviot.setText(Integer.toString(tilastot[1]));
+        overallTapot.setText(Integer.toString(tilastot[2]));
+        overallKuolemat.setText(Integer.toString(tilastot[3]));
+        overallWl.setText(Double.toString(intSuhde(tilastot[0], tilastot[1])));
+        overallKd.setText(Double.toString(intSuhde(tilastot[2], tilastot[3])));
+    }
+    
     
     /**
      * Luo uuden hahmon
@@ -162,23 +208,34 @@ public class StatTrackerGUIController implements Initializable {
             Dialogs.showMessageDialog("Virhe uuden luomisessa: " + e.getMessage());
             return;
         }
-        hae(hahmo.getTunnusNro());
+        haeHahmot(hahmo.getHid());
+        updateOverall();
+    }
+    
+    /**
+     * Luo uuden buildin, mutte
+     */
+    private void uusiTemplateBuild() {
+        Build build = new Build();
+        
+        try {
+            profiili.LisaaBuild(build);
+        } catch (Exception e) {
+            Dialogs.showMessageDialog("Virhe uuden buildin luomisessa: " + e.getMessage());
+            return;
+        }
+        haeBuildit(build.getBid());
     }
     
     /**
      * Luo uuden buildin
      */
-    public void uusiBuild() {
-        try {
-        if (hahmoKohdalla == null) return;
-        Build build = new Build();
-        profiili.LisaaBuild(build);
-        profiili.LisaaHahmolleBuild(hahmoKohdalla.getTunnusNro(), build.getBid());
-        hae(hahmoKohdalla.getTunnusNro());
-        } catch (SailoException e) {
-            Dialogs.showMessageDialog(e.getMessage());
-        }
-    }
+    /*
+     * public void uusiBuild() { try { if (hahmoKohdalla == null) return; Build
+     * build = new Build(); profiili.LisaaBuild(build);
+     * haeHahmot(hahmoKohdalla.getHid()); } catch (SailoException e) {
+     * Dialogs.showMessageDialog(e.getMessage()); } }
+     */
     
     
     /**
@@ -187,28 +244,81 @@ public class StatTrackerGUIController implements Initializable {
      */
     public void setProfiili(Profiili profiili) {
         this.profiili = profiili;
+        updateOverall();
+        naytaHahmo();
+    }
+    
+    /*
+     * Palauttaa suhteen kahden int-luvun v‰lill‰. K‰ytet‰‰n kd:n ja wl:n laskemiseksi
+     */
+    private double intSuhde(int jaettava, int jakaja) {
+        return Double.valueOf(jaettava)/Double.valueOf(jakaja);
+    }
+    
+    /**
+     * N‰ytt‰‰ buildit joissa hahmo on mukana
+     */
+    protected void naytaBuild() {
+        buildKohdalla = chooserBuildit.getSelectedObject();
+        
+        if (buildKohdalla == null) return;
+        buildInfo.setText(buildKohdalla.getKuvaus());
+    }
+    
+    /**
+     * Lis‰‰ valitun buildin valitulle hahmolle
+     */
+    protected void annaHahmolleBuild(){
+        hahmoKohdalla = chooserHahmot.getSelectedObject();
+        buildKohdalla = chooserBuildit.getSelectedObject();
+        
+        if (buildKohdalla == null || hahmoKohdalla == null) {
+            System.out.println("Buildia ei annettu sill‰ toinen valinnoista on tyhj‰ \nValittu hahmo: " + hahmoKohdalla + "\nValittu build" + buildKohdalla);
+            Dialogs.showMessageDialog("Build voidaan antaa hahmolle vain jos build sek‰ hahmo ovat valittuina");
+            return;
+        }
+        profiili.LisaaHahmolleBuild(hahmoKohdalla.getHid(), buildKohdalla.getBid());
         naytaHahmo();
     }
 
     /**
-     * 
+     * N‰ytt‰‰ hahmon tiedot joka on t‰ll‰ hetkell‰ valittuna
      */
     protected void naytaHahmo() {
         hahmoKohdalla = chooserHahmot.getSelectedObject();
+        builditField.clear();
         
         if (hahmoKohdalla == null) return;
+        nimiField.setText(hahmoKohdalla.getNimi());
+        int voitot = hahmoKohdalla.getVoitot();
+        int haviot = hahmoKohdalla.getHaviot();
+        int tapot = hahmoKohdalla.getTapot();
+        int kuolemat = hahmoKohdalla.getKuolemat();
+        double kd = intSuhde(tapot, kuolemat);
+        double wl = intSuhde(voitot, haviot);
         
-        areaHahmo.setText("");
-        try (PrintStream os = TextAreaOutputStream.getTextPrintStream(areaHahmo)){
-            hahmoKohdalla.tulosta(os);
+        tapotField.setText(Integer.toString(tapot));
+        kuolematField.setText(Integer.toString(kuolemat));
+        voitotField.setText(Integer.toString(voitot));
+        haviotField.setText(Integer.toString(haviot));
+        kdField.setText(Double.toString(kd));
+        wlField.setText(Double.toString(wl));
+        
+        List<Integer> BuildIdt = profiili.annaHahmonBuildit(hahmoKohdalla.getHid());
+        for (int id : BuildIdt) {
+            Build vastaus = profiili.annaBuildViite(id);
+            if (vastaus.getNimi() != null) builditField.appendText(vastaus.getNimi() + "\n");
         }
-        areaBuild.setText("");
-        try (PrintStream os = TextAreaOutputStream.getTextPrintStream(areaBuild)){
-            hid = hahmoKohdalla.getTunnusNro();
-            List<Integer> buildit = profiili.annaHahmonBuildit(hid);
-            if (buildit.isEmpty()) return;
-            profiili.tulostaBuildit(buildit, os);
-        }
+        
+        /*
+         * areaHahmo.setText(""); try (PrintStream os =
+         * TextAreaOutputStream.getTextPrintStream(areaHahmo)){
+         * hahmoKohdalla.tulosta(os); } areaBuild.setText(""); try (PrintStream
+         * os = TextAreaOutputStream.getTextPrintStream(areaBuild)){ hid =
+         * hahmoKohdalla.getHid(); List<Integer> buildit =
+         * profiili.annaHahmonBuildit(hid); if (buildit.isEmpty()) return;
+         * profiili.tulostaBuildit(buildit, os); }
+         */
         
     }
     
@@ -216,17 +326,44 @@ public class StatTrackerGUIController implements Initializable {
      * Hakee hahmojen tiedot listaan
      * @param tunnusNro hahmon numero, joka aktivoidaan haun j‰lkeen
      */
-    protected void hae(int tunnusNro) {
+    private void haeHahmot(int tunnusNro) {
         chooserHahmot.clear();
         
         int index = 0;
-        for (int i = 0; i < profiili.getHahmoja(); i++) {
+        for (int i = 0; i < profiili.getHahmoMaara(); i++) {
             Hahmo hahmo = profiili.annaHahmo(i);
-            if (hahmo.getTunnusNro() == tunnusNro) index = i;
+            if (hahmo.getHid() == tunnusNro) index = i;
             chooserHahmot.add(hahmo.getNimi(), hahmo);
         }
         chooserHahmot.getSelectionModel().clearAndSelect(index);
         
+    }
+    
+    /**
+     * Hakee buildien tiedot listaan
+     * @param tunnusNro buildin numero, joka aktivoidaan haun j‰lkeen
+     */
+    protected void haeBuildit(int tunnusNro) {
+        chooserBuildit.clear();
+        
+        int index = 0;
+        for (int i = 0; i < profiili.getBuildMaara(); i++) {
+            Build build = profiili.annaBuild(i);
+            if (build.getBid() == tunnusNro) index = i;
+            chooserBuildit.add(build.getNimi(), build);
+        }
+        chooserBuildit.getSelectionModel().clearAndSelect(index);
+    }
+
+    /**
+     * Metodi joka varmistaa ett‰ profiili avataan
+     * @return False jos k‰ytt‰j‰ peruu profiilin avaamisen
+     */
+    public static boolean avaa() {
+        String profiiliNimi = AvaaController.kysyProfiili(null, "exampleProfile");
+        if (profiiliNimi == null) return false;
+        // lueTiedosto(profiiliNimi);
+        return true;
     }
     
     

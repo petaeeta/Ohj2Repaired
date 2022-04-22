@@ -9,7 +9,7 @@ package StatTracker;
 public class Hahmot {
     private int lkm;
     private int maxlkm = 8; // kätetään vasta kun tietorakennetta aletaan kasvattamaan rajatta
-    private Hahmo[] hahmot = new Hahmo[8];
+    private Hahmo[] hahmot = new Hahmo[maxlkm];
     
     /**
      * Hahmot luokan konstruktori, joka luo taulukon, jonne voi
@@ -73,6 +73,50 @@ public class Hahmot {
     public int getLkm() {
         return lkm;
     }
+    
+    /**
+     * Laskee yhteen kaikkien hahmojen tilastot.
+     * @return paketin jossa on kaikkien hahmojen yhteenlasketut tilastot. Palautetaan Hahmo-oliona sillä Hahmo-oliosta löytyy kaikki tarvittavat attribuutit, oikeata hahmoa ei kuitenkaan luoda.
+     */
+    /*
+     * public Hahmo getOverallTilastot() { Hahmo hahmo = new Hahmo(false); for
+     * (Hahmo i : hahmot) { if (i == null) break;
+     * hahmo.setVoitot(hahmo.getVoitot() + i.getVoitot());
+     * hahmo.setHaviot(hahmo.getHaviot() + i.getHaviot());
+     * hahmo.setTapot(hahmo.getTapot() + i.getTapot());
+     * hahmo.setKuolemat(hahmo.getKuolemat() + i.getKuolemat()); } return hahmo;
+     * }
+     */
+    
+    /**
+     * Laskee yhteen kaikkien hahmojen tilastot.
+     * @return int-listan
+     * @example
+     * <pre name="test">
+     * #THROWS SailoException
+     * Hahmot hahmot = new Hahmot();
+     * Hahmo hahmo1 = new Hahmo("Kalle", 3, 5, 12, 2);
+     * Hahmo hahmo2 = new Hahmo("Ville", 1, 33, 74, 100);
+     * hahmot.LisaaHahmo(hahmo1);
+     * hahmot.LisaaHahmo(hahmo2);
+     * int[] overall = hahmot.getOverallTilastot();
+     * overall[0] === 3 + 1;
+     * overall[1] === 5 + 33;
+     * overall[2] === 12 + 74;
+     * overall[3] === 2 + 100;
+     * </pre>
+     */
+    public int[] getOverallTilastot() {
+        int[] stats = new int[4];
+        for (Hahmo i : hahmot) {
+            if (i == null) break;
+            int[] hahmoStats = i.getStats();
+            for (int j = 0; j<stats.length; j++) {
+                stats[j] += hahmoStats[j];
+            }
+        }
+        return stats;
+    }
 
 
     /**
@@ -80,6 +124,17 @@ public class Hahmot {
      * @param i monennenko hahmon viite halutaan
      * @return viite hahmoon, jonka indeksi on i
      * @throws IndexOutOfBoundsException mikäli i ei ole sallitulla alueella
+     * @example
+     * <pre name="test">
+     * #THROWS SailoException
+     * Hahmot hahmot = new Hahmot();
+     * Hahmo hahmo1 = new Hahmo("Kalle", 3, 5, 12, 2);
+     * Hahmo hahmo2 = new Hahmo("Ville", 1, 33, 74, 100);
+     * hahmot.LisaaHahmo(hahmo1);
+     * hahmot.LisaaHahmo(hahmo2);
+     * hahmot.anna(0) === hahmo1;
+     * hahmot.anna(1) === hahmo2;
+     * </pre>
      */
     public Hahmo anna(int i) throws IndexOutOfBoundsException {
         if (i < 0 || lkm <= i)

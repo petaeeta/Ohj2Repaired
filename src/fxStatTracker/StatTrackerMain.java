@@ -1,6 +1,7 @@
 package fxStatTracker;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -11,13 +12,14 @@ import StatTracker.*;
 /**
  * @author petteri
  * @version 14.2.2019
+ * @version 21.4.2022
  *
  */
 public class StatTrackerMain extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader ldr = new FXMLLoader(getClass().getResource("StatTrackerGUIView.fxml"));
+            final FXMLLoader ldr = new FXMLLoader(getClass().getResource("StatTrackerGUIView.fxml"));
             final Pane root = (Pane)ldr.load();
             final StatTrackerGUIController stattrackerCtrl = (StatTrackerGUIController) ldr.getController();
             Scene scene = new Scene(root);
@@ -33,6 +35,7 @@ public class StatTrackerMain extends Application {
             }));
             
             primaryStage.show();
+            if ( !StatTrackerGUIController.avaa()) Platform.exit();
         } catch(Exception e) {
             e.printStackTrace();
         }
