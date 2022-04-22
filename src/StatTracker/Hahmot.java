@@ -1,5 +1,12 @@
 package StatTracker;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.Scanner;
+
 /**
  * 
  * @author petteri
@@ -10,6 +17,8 @@ public class Hahmot {
     private int lkm;
     private int maxlkm = 8; // k‰tet‰‰n vasta kun tietorakennetta aletaan kasvattamaan rajatta
     private Hahmo[] hahmot = new Hahmo[maxlkm];
+    private String profiiliNimi = "profiili";
+    private String tiedostoNimi = "hahmot";
     
     /**
      * Hahmot luokan konstruktori, joka luo taulukon, jonne voi
@@ -48,8 +57,15 @@ public class Hahmot {
      * hahmot.LisaaHahmo(hahmo1); #THROWS SailoException
      * </pre>
      */
-    public void LisaaHahmo(Hahmo hahmo) throws SailoException {
-        if (lkm >= hahmot.length) throw new SailoException("Liikaa alkioita");
+    public void lisaaHahmo(Hahmo hahmo) throws SailoException {
+        if (lkm >= hahmot.length) {
+            maxlkm += 20;
+            Hahmo[] uusi = new Hahmo[maxlkm];
+            for(int i = 0; i < hahmot.length; i++) {
+                uusi[i] = hahmot[i];
+            }
+            hahmot = uusi;
+        }
         hahmot[lkm] = hahmo;
         lkm++;
     }
@@ -117,6 +133,24 @@ public class Hahmot {
         }
         return stats;
     }
+    
+    
+    /**
+     * Palauttaa profiilin nimen
+     * @return profiilin nimen
+     */
+    public String getProfiiliNimi() {
+        return profiiliNimi;
+    }
+    
+    /**
+     * Asettaa profiilin nimen
+     * @param nimi profiilin uusi nimi
+     */
+    public void setProfiiliNimi(String nimi) {
+        profiiliNimi = nimi;
+        
+    }
 
 
     /**
@@ -142,4 +176,101 @@ public class Hahmot {
         return hahmot[i];
     }
     
+    
+    /**
+     * Tallentaa tiedot jo asetettuun tiedostonimeen
+     * @throws SailoException jos tallennus ep‰onnistuu
+     */
+    public void tallenna() throws SailoException {
+        tallenna(getProfiiliNimi());
+    }
+    
+    /**
+     * @param tiednimi tallennettavan tiedoston nimi
+     * @throws SailoException jos talletus ep‰onnistuu
+     */
+    public void tallenna(String tiednimi) throws SailoException {
+        File tied = new File(tiednimi + "/" + tiedostoNimi + ".dat");
+        try {
+            try (PrintStream fo = new PrintStream(new FileOutputStream(tied, false))) {
+                for (int i = 0; i<getLkm(); i++) {
+                    Hahmo hahmo = anna(i);
+                    fo.println(hahmo);
+                }
+            }
+        } catch(Exception e) {
+            throw new SailoException("Tiedosto " + tied.getAbsolutePath() + " ei aukea");
+        }
+    }
+    
+    /**
+     * Lukee tiedostosta jolla on jo asetettu profiilinimi
+     * @throws SailoException pik‰li ei lˆydy
+     */
+    public void lueTiedostosta() throws SailoException {
+        lueTiedostosta(getProfiiliNimi());
+    }
+    
+    /**
+     * Lukee tiedostosta profiilinime‰ vastaan
+     * @param hakemisto josta luetaan
+     * @throws SailoException jos ei lˆydy
+     */
+    public void lueTiedostosta(String hakemisto) throws SailoException {
+        String tiedostonNimi = hakemisto + "/" + tiedostoNimi + ".dat";
+        File ftied = new File(tiedostonNimi);
+        try {
+            try (Scanner fi = new Scanner(new FileInputStream(ftied))) {
+                while (fi.hasNext()) {
+                    String s = "";
+                    s = fi.nextLine();
+                    Hahmo hahmo = new Hahmo(false);
+                    hahmo.parse(s);
+                    lisaaHahmo(hahmo);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new SailoException("Ei saa luettua tiedostoa " + tiedostonNimi);
+            
+        } /*
+           * catch (IOException e) { throw new
+           * SailoException("Ongelmia tiedoston kanssa: " + e.getMessage()); }
+           */
+    }
+    
+    /**
+     * @param args ei k‰ytˆss‰
+     */
+    public static void main(String[] args) {
+        Hahmot hahmot = new Hahmot();
+        
+        try {
+            hahmot.lueTiedostosta("Esimerkkiprofiili");
+            
+        }catch(SailoException e) {
+            System.err.println("Ei voi lukea " + e.getMessage());
+        }
+        
+        Hahmo hahmo1 = new Hahmo();
+        Hahmo hahmo2 = new Hahmo();
+        
+        hahmo1.tulosta(System.out);
+        hahmo2.tulosta(System.out);
+        try {
+            hahmot.lisaaHahmo(hahmo1);
+            hahmot.lisaaHahmo(hahmo2);
+        } catch (SailoException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        try {
+            hahmot.tallenna("Esimerkkiprofiili");
+        } catch (SailoException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    
+    }
+
 }

@@ -23,9 +23,9 @@ public class HahmobuilditTest {
     Hahmobuildit hahmobuildit = new Hahmobuildit(); 
     Hahmon_build hb1 = new Hahmon_build(1, 3); 
     Hahmon_build hb2 = new Hahmon_build(1, 2); 
-    hahmobuildit.LisaaHahmolleBuild(1, 3); 
-    hahmobuildit.LisaaHahmolleBuild(1, 2); 
-    hahmobuildit.LisaaHahmolleBuild(2, 3); 
+    hahmobuildit.lisaaHahmolleBuild(1, 3); 
+    hahmobuildit.lisaaHahmolleBuild(1, 2); 
+    hahmobuildit.lisaaHahmolleBuild(2, 3); 
     List<Integer> vastaus = hahmobuildit.annaHahmonBuildit(1); 
     Iterator<Integer> it = vastaus.iterator(); 
     it.next().equals(hb1); 
@@ -41,9 +41,9 @@ public class HahmobuilditTest {
     Hahmobuildit hahmobuildit = new Hahmobuildit(); 
     Hahmon_build hb1 = new Hahmon_build(1, 3); 
     Hahmon_build hb2 = new Hahmon_build(1, 2); 
-    hahmobuildit.LisaaHahmolleBuild(1, 3); 
-    hahmobuildit.LisaaHahmolleBuild(1, 2); 
-    hahmobuildit.LisaaHahmolleBuild(2, 3); 
+    hahmobuildit.lisaaHahmolleBuild(1, 3); 
+    hahmobuildit.lisaaHahmolleBuild(1, 2); 
+    hahmobuildit.lisaaHahmolleBuild(2, 3); 
     List<Integer> vastaus = hahmobuildit.annaHahmonBuildit(1); 
     Iterator<Integer> it = vastaus.iterator(); 
     it.next().equals(hb1); 

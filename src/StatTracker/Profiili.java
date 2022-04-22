@@ -1,5 +1,6 @@
 package StatTracker;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.List;
 
@@ -7,12 +8,14 @@ import java.util.List;
  * Profiili-luokka, joka yhdistelee buildien ja hahmojen tietoja.
  * @author petteri
  * @version 29.3.2019
+ * @version 21.4.2022
  *
  */
 public class Profiili {
-    private final Hahmot hahmot = new Hahmot();
-    private final Hahmobuildit hahmobuildit = new Hahmobuildit();
-    private final Buildit buildit = new Buildit();
+    private String profiiliNimi = "Profiili";
+    private Hahmot hahmot = new Hahmot();
+    private Hahmobuildit hahmobuildit = new Hahmobuildit();
+    private Buildit buildit = new Buildit();
     
     /**
      * Poistaa Hahmotaulukosta ja buildeista ne, jotka on merkitty id:llä nro.
@@ -85,7 +88,7 @@ public class Profiili {
      * @throws SailoException jos lisäystä ei voida tehdä
      */
     public void LisaaHahmo(Hahmo hahmo) throws SailoException {
-        hahmot.LisaaHahmo(hahmo);
+        hahmot.lisaaHahmo(hahmo);
         
     }
     
@@ -95,7 +98,7 @@ public class Profiili {
      * @param bid buildin id
      */
     public void LisaaHahmolleBuild(int hid, int bid) {
-        hahmobuildit.LisaaHahmolleBuild(hid, bid);
+        hahmobuildit.lisaaHahmolleBuild(hid, bid);
     }
     
     /**
@@ -128,6 +131,20 @@ public class Profiili {
     }
     
     /**
+     * Asettaa käytettävän profiilin
+     * @param nimi profiilin nimi
+     */
+    public void setProfiili(String nimi) {
+        File tied = new File("Profiilit\\" + nimi);
+        tied.mkdirs();
+        String hakemisto = "";
+        if (!nimi.isEmpty()) hakemisto = "Profiilit\\" + nimi;
+        hahmot.setProfiiliNimi(hakemisto);
+        buildit.setProfiiliNimi(hakemisto);
+        hahmobuildit.setProfiiliNimi(hakemisto);
+    }
+    
+    /**
      * Metodi välittää tallennettujen hahmojen yhteenlasketut tilastot halutuille paikoilleen
      * @return paketin jossa on kaikkien hahmojen yhteenlasketut tilastot. Palautetaan Hahmo-oliona sillä Hahmo-oliosta löytyy kaikki tarvittavat attribuutit, oikeata hahmoa ei kuitenkaan luoda.
      */
@@ -146,27 +163,67 @@ public class Profiili {
     }
     
     /**
-     * @param args ei käytössä
+     * Tallentaa tämänhetkiset tiedot tiedostoon
+     * @param tied profiilinimi jonne tallennetaan
+     * @throws SailoException jos ei onnistu
      */
-    public static void main(String[] args) {
+    public void tallenna(String tied) throws SailoException {
+        setProfiili(tied);
+        hahmot.tallenna();
+        buildit.tallenna();
+        hahmobuildit.tallenna();
+    }
+    
+    /**
+     * Lukee tiedot oletusprofiilista
+     * @throws SailoException jos ei löydy
+     */
+    public void lueTiedostosta() throws SailoException{
+        hahmot.lueTiedostosta(getProfiiliNimi());
+    }
+    
+    /**
+     * Asettaa profiilin nimen
+     * @param uusi profiilinimi
+     */
+    public void setProfiiliNimi(String uusi) {
+        profiiliNimi = uusi;
+    }
+    
+    
+    /**
+     * Palauttaa profiilinimen
+     * @return profiilinimen
+     */
+    public String getProfiiliNimi() {
+        return profiiliNimi;
+    }
+
+    /**
+     * Lukee tiedot profiilista jonka nimi annetaan parametrina
+     * @param nimi profiilin nimi
+     * @throws SailoException jos ei löydy
+     */
+    public void lueTiedostosta(String nimi) throws SailoException{
+        hahmot = new Hahmot();
+        buildit = new Buildit();
+        hahmobuildit = new Hahmobuildit();
+        
+        setProfiili(nimi);
+        hahmot.lueTiedostosta();
+        buildit.lueTiedostosta();
+        hahmobuildit.lueTiedostosta();
+    }
+    
+    /**
+     * @param args ei käytössä
+     * @throws SailoException jos ei löydy
+     */
+    public static void main(String[] args) throws SailoException {
         Profiili profiili = new Profiili();
         
-        Hahmo hahmo1 = new Hahmo();
-        Hahmo hahmo2 = new Hahmo();
-        
-        try {
-            profiili.LisaaHahmo(hahmo1);
-            profiili.LisaaHahmo(hahmo2);
-        } catch (SailoException e) {
-            System.out.println(e.getMessage());
-        }
-        
-        for (int i=0; i<profiili.getHahmoMaara(); i++) {
-            Hahmo hahmo = profiili.annaHahmo(i);
-            hahmo.tulosta(System.out);
-        }
-        
-        
+        profiili.lueTiedostosta("Esimerkkiprofiili");
+        profiili.tallenna("Profiili2");
         
     }
 

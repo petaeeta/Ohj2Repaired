@@ -1,7 +1,12 @@
 package StatTracker;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * 
@@ -13,6 +18,8 @@ public class Buildit {
    private Build[] taulukko = new Build[10];
    private int maxlkm = 10; //k‰ytet‰‰n vasta kun tietorakennetta kasvatetaan rajatta
    private int lkm;
+   private String profiiliNimi = "profiili";
+   private String tiedostoNimi = "buildit";
    
    /**
     * Konstruktori oletusbuilditaulukon luomiselle
@@ -46,9 +53,16 @@ public class Buildit {
     * </pre>
     */
    public void lisaaBuild(Build build) throws SailoException {
-       if (lkm >= taulukko.length) throw new SailoException("Liikaa alkioita");
-           taulukko[lkm] = build;
-           lkm++;
+       if (lkm >= taulukko.length) {
+           maxlkm += 20;
+           Build[] uusi = new Build[maxlkm];
+           for(int i = 0; i < taulukko.length; i++) {
+               uusi[i] = taulukko[i];
+           }
+           taulukko = uusi;
+       }
+       taulukko[lkm] = build;
+       lkm++;
    }
    
    /**
@@ -94,6 +108,114 @@ public class Buildit {
    }
    
    /**
+    * Palauttaa profiilin nimen
+    * @return profiilin nimen
+     */
+   public String getProfiiliNimi() {
+       return profiiliNimi;
+   }
+   
+   /**
+    * Asettaa profiilin nimen
+    * @param uusi uusi nimi
+     */
+   public void setProfiiliNimi(String uusi) {
+       profiiliNimi = uusi;
+   }
+   
+   
+   /**
+    * Lukee tiedoston jo asetetulla profiilinimell‰
+    * @throws SailoException jos ei lˆydy
+     */
+   public void lueTiedostosta() throws SailoException {
+       lueTiedostosta(getProfiiliNimi());
+   }
+   
+   
+    /**
+     * Lukee tiedoston halutusta paikasta
+     * @param hakemisto josta tiedosto luetaan
+     * @throws SailoException jos luku ei onnistu
+     */
+   public void lueTiedostosta(String hakemisto) throws SailoException {
+       String tiedostonNimi = hakemisto + "/buildit.dat";
+       File ftied = new File(tiedostonNimi);
+       try {
+           try (Scanner fi = new Scanner(new FileInputStream(ftied))) {
+               while (fi.hasNext()) {
+                   String s = "";
+                   s = fi.nextLine();
+                   Build build = new Build(false);
+                   build.parse(s);
+                   lisaaBuild(build);
+               }
+           }
+       } catch (FileNotFoundException e) {
+           throw new SailoException("Ei saa luettua tiedostoa " + tiedostonNimi);
+           
+       }
+       /*
+          * catch (IOException e) { throw new
+          * SailoException("Ongelmia tiedoston kanssa: " + e.getMessage()); }
+          */
+   }
+   
+   /**
+    * Tallentaa tiedot jo asetettuun tiedostonimeen
+    * @throws SailoException jos tallennus ep‰onnistuu
+    */
+   public void tallenna() throws SailoException {
+       tallenna(getProfiiliNimi());
+   }
+   
+   /**
+    * Tallentaa t‰m‰nhetkiset tiedot tiedostoon
+    * @param tiednimi tallennettavan tiedoston nimi
+    * @throws SailoException jos talletus ep‰onnistuu
+    */
+   public void tallenna(String tiednimi) throws SailoException {
+       File tied = new File(tiednimi + "/buildit.dat");
+       try {
+           try (PrintStream fo = new PrintStream(new FileOutputStream(tied, false))) {
+               for (int i = 0; i < getLkm(); i++) {
+                   Build build = anna(i);
+                   fo.println(build);
+               }
+           }
+       } catch(Exception e) {
+           throw new SailoException("Tiedosto " + tied.getAbsolutePath() + " ei aukea");
+       }
+   }
+   
+   public static void main(String[] args) throws SailoException {
+       Buildit buildit = new Buildit();
+       
+       buildit.lueTiedostosta("Esimerkkiprofiili");
+       
+       Build build1 = new Build();
+       Build build2 = new Build();
+       
+       build1.tulosta(System.out);
+       build2.tulosta(System.out);
+       try {
+           buildit.lisaaBuild(build1);
+           buildit.lisaaBuild(build2);
+       } catch (SailoException e) {
+           // TODO Auto-generated catch block
+           e.printStackTrace();
+       }
+       
+       try {
+           buildit.tallenna("Esimerkkiprofiili");
+       } catch (SailoException e) {
+           // TODO Auto-generated catch block
+           e.printStackTrace();
+       }
+       
+   }
+   
+   /**
     * get-metodi, jolla saadaan buildit-taulukon alkioiden lukum‰‰r‰ 
     * @return t‰ll‰hetkell‰ olevien alkioiden lukum‰‰r‰n
     */
@@ -116,6 +238,5 @@ public class Buildit {
     
     
 }
-
     
 }

@@ -2,6 +2,8 @@ package StatTracker;
 
 import java.io.PrintStream;
 
+import fi.jyu.mit.ohj2.Mjonot;
+
 /**
  * Luokka build-olioiden luomiselle.
  * @author petteri
@@ -11,8 +13,8 @@ import java.io.PrintStream;
  */
 public class Build {
     private int bid;
-    private String nimi;
-    private String kuvaus;
+    private String nimi = "";
+    private String kuvaus = "";
     private static int seuraava_bid = 1;
     
     /**
@@ -30,12 +32,31 @@ public class Build {
         }
     }
     
+    
+    /**
+     * Tekee tyhjän buildin, sekä kysyy halutaanko tämä rekisteröidä.
+     * @param rekisteroidaanko flag joka määrittelee rekisteröidäänkö build
+     */
+    public Build(boolean rekisteroidaanko) {
+        if (rekisteroidaanko) bid = rekisteroi();
+    }
+    
     /**
      * Palauttaa kyseenomaisen buildin id:n
      * @return buildin id-numero
      */
     public int getBid() {
         return bid;
+    }
+    
+    
+    /**
+     * Asettaa build id:n
+     * @param uusi build id
+     */
+    public void setBid(int uusi) {
+        bid = uusi;
+        if (bid >= seuraava_bid) seuraava_bid = bid + 1;
     }
     
     
@@ -92,5 +113,23 @@ public class Build {
     public String getKuvaus() {
         return kuvaus;
     }
+
+
+    /**
+     * Osaa parsia buildin tiedot tiedostosta
+     * @param rivi josta tiedot luetaan
+     */
+    public void parse(String rivi) {
+        StringBuilder sb = new StringBuilder(rivi);
+        setBid(Mjonot.erota(sb, '|', getBid()));
+        nimi = Mjonot.erota(sb, '|', nimi);
+        kuvaus = Mjonot.erota(sb, '|', kuvaus);
+        
+    }
+    
+    @Override
+    public String toString() {
+        return "" + bid + "|" + nimi + "|" + kuvaus;
+    }    
 
 }

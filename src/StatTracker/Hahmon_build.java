@@ -1,5 +1,7 @@
 package StatTracker;
 
+import fi.jyu.mit.ohj2.Mjonot;
+
 /**
  * Luokka, johon tallennetaan alkioita merkkaamaan, mit‰ buildeja mik‰kin hahmo k‰ytt‰‰
  * @author petteri
@@ -10,6 +12,13 @@ public class Hahmon_build {
 
     private int hid;
     private int bid;
+    
+    
+    /**
+     * Luo tyhj‰n Hahmobuildin
+     */
+    public Hahmon_build() {
+    }
     
     /**
      * Konstruktori hahmon buildien tallentamiseksi
@@ -42,6 +51,23 @@ public class Hahmon_build {
     }
     
     /**
+     * Asettaa uuden hahmo-id:n
+     * @param uusi uusi hid
+     */
+    public void setHid(int uusi) {
+        hid = uusi;
+    }
+    
+    /**
+     * Asettaa uuden build-id:n
+     * @param uusi uusi bid
+     * 
+     */
+    public void setBid(int uusi) {
+        bid = uusi;
+    }
+    
+    /**
      * 
      * @return palauttaa build id:n
      */
@@ -56,4 +82,20 @@ public class Hahmon_build {
     public boolean equals(Hahmon_build verrattava) {
         return (verrattava.getHid() == this.hid && verrattava.getBid() == this.bid);
     }
+    
+
+    /**
+     * Osaa parsia buildin tiedot tiedostosta
+     * @param rivi josta tiedot luetaan
+     */
+    public void parse(String rivi) {
+        StringBuilder sb = new StringBuilder(rivi);
+        setHid(Mjonot.erota(sb, '|', getHid()));
+        setBid(Mjonot.erota(sb, '|', getBid()));
+    }
+    
+    @Override
+    public String toString() {
+        return "" + hid + "|" + bid;
+    }    
 }

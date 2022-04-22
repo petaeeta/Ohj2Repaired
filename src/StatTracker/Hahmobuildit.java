@@ -1,9 +1,15 @@
 package StatTracker;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 
 import fi.jyu.mit.fxgui.Dialogs;
 
@@ -14,6 +20,7 @@ import fi.jyu.mit.fxgui.Dialogs;
  *
  */
 public class Hahmobuildit implements Iterable<Hahmon_build> {
+    private String profiiliNimi = "";
     private final Collection<Hahmon_build> taulukko = new ArrayList<Hahmon_build>();
     /**
      * konstruktori hahmon buildien tallentamiseksi
@@ -48,7 +55,7 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
      * it.hasNext() === false;
      * </pre>
      */
-    public void LisaaHahmolleBuild(int hid, int bid) {
+    public void lisaaHahmolleBuild(int hid, int bid) {
         try {
             Hahmon_build lisattava = new Hahmon_build(hid, bid);
             for (Hahmon_build b : taulukko) {
@@ -60,6 +67,103 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
             taulukko.add(lisattava);
         } catch (Exception e) {
             System.err.print("Odottamaton virhe tapahtui buildin luonnissa: " + e.getMessage() );
+        }
+    }
+    
+    /**
+     * Lisää parametrina annetun Hahmon_buildin
+     * @param lisattava hahmon_build
+     */
+    public void lisaaHahmolleBuild(Hahmon_build lisattava) {
+        try {
+            for (Hahmon_build b : taulukko) {
+                if (b.equals(lisattava)) {
+                    throw new SailoException("Tällä hahmolla on jo kyseinen build");
+                }
+            }
+            taulukko.add(lisattava);
+        } catch (Exception e) {
+            System.err.print("Odottamaton virhe tapahtui buildin luonnissa: " + e.getMessage() );
+        }
+    }
+    
+    /**
+     * Palauttaa profiilin nimen
+     * @return profiilin nimen
+     */
+    public String getProfiiliNimi() {
+        return profiiliNimi;
+    }
+    
+    /**
+     * Asettaa profiilin nimen
+     * @param nimi profiilin uusi nimi
+     */
+    public void setProfiiliNimi(String nimi) {
+        profiiliNimi = nimi;
+    }
+    
+    /**
+     * Lukee tiedoston jo asetetulla profiilinimellä
+     * @throws SailoException jos ei löydy
+      */
+    public void lueTiedostosta() throws SailoException {
+        lueTiedostosta(getProfiiliNimi());
+    }
+    
+    
+     /**
+      * Lukee tiedoston halutusta paikasta
+      * @param hakemisto josta tiedosto luetaan
+      * @throws SailoException jos luku ei onnistu
+      */
+    public void lueTiedostosta(String hakemisto) throws SailoException {
+        String tiedostonNimi = hakemisto + "/hahmobuildit.dat";
+        File ftied = new File(tiedostonNimi);
+        try {
+            try (Scanner fi = new Scanner(new FileInputStream(ftied))) {
+                while (fi.hasNext()) {
+                    String s = "";
+                    s = fi.nextLine();
+                    Hahmon_build hb = new Hahmon_build();
+                    hb.parse(s);
+                    lisaaHahmolleBuild(hb);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            throw new SailoException("Ei saa luettua tiedostoa " + tiedostonNimi);
+            
+        }
+        /*
+           * catch (IOException e) { throw new
+           * SailoException("Ongelmia tiedoston kanssa: " + e.getMessage()); }
+           */
+    }
+    
+    /**
+     * Tallentaa tiedot jo asetettuun tiedostonimeen
+     * @throws SailoException jos tallennus epäonnistuu
+     */
+    public void tallenna() throws SailoException {
+        tallenna(getProfiiliNimi());
+    }
+    
+    /**
+     * Tallentaa tämänhetkiset tiedot tiedostoon
+     * @param tiednimi tallennettavan tiedoston nimi
+     * @throws SailoException jos talletus epäonnistuu
+     */
+    public void tallenna(String tiednimi) throws SailoException {
+        File tied = new File(tiednimi + "/hahmobuildit.dat");
+        try {
+            try (PrintStream fo = new PrintStream(new FileOutputStream(tied, false))) {
+                for (Iterator<Hahmon_build> it = taulukko.iterator(); it.hasNext();) {
+                    Hahmon_build hb = it.next();
+                    fo.println(hb);
+                }
+            }
+        } catch(Exception e) {
+            throw new SailoException("Tiedosto " + tied.getAbsolutePath() + " ei aukea");
         }
     }
     

@@ -3,6 +3,8 @@ package StatTracker;
 import java.io.PrintStream;
 import java.util.Random;
 
+import fi.jyu.mit.ohj2.Mjonot;
+
 /**
  * 
  * @author petteri
@@ -86,7 +88,7 @@ public class Hahmo {
      * 
      * </pre>
      */
-    private int rekisteroi() {
+    public int rekisteroi() {
         this.hid = seuraava_hid;
         seuraava_hid++;
         return this.hid;
@@ -200,6 +202,15 @@ public class Hahmo {
         return hid;
     }
     
+    /**
+     * Set-metodi hahmon tunnusnumeron muuttamiseksi
+     * @param uusi arvo joka hahmo id:ksi asetetaan
+     */
+    public void setHid(int uusi) {
+        hid = uusi;
+        if (hid >= seuraava_hid) seuraava_hid = hid + 1;
+    }
+    
     
     /**
      * Get-metodi seuraavan luotavan hahmon id-numerolle. Luotu l‰hinn‰ Junit-testeille ettei tarvitse pit‰‰ seuraava_hid attribuuttia public n‰kyvyydell‰.
@@ -209,4 +220,31 @@ public class Hahmo {
         return seuraava_hid;
     }
     
+    /**
+     * Lukee tiedostosta rivin asettaen sielt‰ luetut arvot oikeille paikoillensa
+     * @param rivi jota luetaan
+     * @example
+     * <pre name="test">
+     * Hahmo hahmo = new Hahmo(false);
+     * hahmo.parse("5  | Widowmaker         |  420");
+     * hahmo.getHid() === 5;
+     * hahmo.toString().startsWith("5|Widowmaker|420") === true;
+     * </pre>
+     */
+    public void parse(String rivi) {
+        StringBuilder sb = new StringBuilder(rivi);
+        setHid(Mjonot.erota(sb, '|', getHid()));
+        nimi = Mjonot.erota(sb, '|', nimi);
+        voitot = Mjonot.erota(sb, '|', voitot);
+        haviot = Mjonot.erota(sb, '|', haviot);
+        tapot = Mjonot.erota(sb, '|', tapot);
+        kuolemat = Mjonot.erota(sb, '|', kuolemat);
+        
+    }
+    
+    
+    @Override
+    public String toString() {
+        return "" + hid + "|" + nimi + "|" + voitot + "|" + haviot + "|" + tapot + "|" + kuolemat;
+    }    
 }
