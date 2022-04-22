@@ -69,8 +69,9 @@ public class Profiili {
      * Palauttaa id-numeroa vastaan viitteen buildiin, joka etsitään taulukosta
      * @param i id-numero jota vastaan build annetaan
      * @return viite buildiin, null jos ei olemassa
+     * @throws SailoException jos ei löydy
      */
-    public Build annaBuildViite(int i) {
+    public Build annaBuildViite(int i) throws SailoException {
         return buildit.annaBuild(i);
     }
     
@@ -99,6 +100,15 @@ public class Profiili {
      */
     public void LisaaHahmolleBuild(int hid, int bid) {
         hahmobuildit.lisaaHahmolleBuild(hid, bid);
+    }
+    
+    /**
+     * Lisää buildin ja hahmon välisen yhteyden
+     * @param hb Lisättävä Hahmon_build
+     */
+    public void LisaaHahmolleBuild(Hahmon_build hb) {
+        hahmobuildit.lisaaHahmolleBuild(hb);
+        
     }
     
     /**
@@ -139,6 +149,7 @@ public class Profiili {
         tied.mkdirs();
         String hakemisto = "";
         if (!nimi.isEmpty()) hakemisto = "Profiilit\\" + nimi;
+        setProfiiliNimi(nimi);
         hahmot.setProfiiliNimi(hakemisto);
         buildit.setProfiiliNimi(hakemisto);
         hahmobuildit.setProfiiliNimi(hakemisto);
@@ -179,7 +190,7 @@ public class Profiili {
      * @throws SailoException jos ei löydy
      */
     public void lueTiedostosta() throws SailoException{
-        hahmot.lueTiedostosta(getProfiiliNimi());
+            lueTiedostosta(getProfiiliNimi());
     }
     
     /**

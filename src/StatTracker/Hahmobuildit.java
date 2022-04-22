@@ -17,9 +17,11 @@ import fi.jyu.mit.fxgui.Dialogs;
  * Luokka taulukolle, johon on tallennettu hahmojen buildeja
  * @author petteri
  * @version 29.3.2019
+ * @version 23.4.2022
  *
  */
 public class Hahmobuildit implements Iterable<Hahmon_build> {
+    private String tiedostoNimi = "hahmobuildit";
     private String profiiliNimi = "";
     private final Collection<Hahmon_build> taulukko = new ArrayList<Hahmon_build>();
     /**
@@ -154,7 +156,7 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
      * @throws SailoException jos talletus epäonnistuu
      */
     public void tallenna(String tiednimi) throws SailoException {
-        File tied = new File(tiednimi + "/hahmobuildit.dat");
+        File tied = new File(tiednimi + "/" + tiedostoNimi + ".dat");
         try {
             try (PrintStream fo = new PrintStream(new FileOutputStream(tied, false))) {
                 for (Iterator<Hahmon_build> it = taulukko.iterator(); it.hasNext();) {

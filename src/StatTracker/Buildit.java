@@ -80,15 +80,16 @@ public class Buildit {
     * palauttaa viiteen buildiin joka vastaa parametrina annettua id:tä
     * @param i buildin id jota vastaan etsitään build
     * @return viite buildiin
+    * @throws SailoException jos ei löydy
     */
-      public Build annaBuild(int i){
+      public Build annaBuild(int i) throws SailoException{
           Build vastaus = null;
           for(Build b : taulukko) {
               if (b == null) continue;
               if (b.getBid() == i) vastaus = b;
           }
           // Mikäli on oikein koodattu järjestelmä, näin ei pitäisi edes tapahtua. Printataan error jokatapauksessa.
-          if (vastaus == null) System.err.print("Buildia ei löydy taulukosta id:tä " + i + " vastaan");
+          if (vastaus == null) throw new SailoException("Etsittävää buildia id:llä " + i + " ei löytynyt");
           return vastaus;
       }
    
@@ -139,7 +140,7 @@ public class Buildit {
      * @throws SailoException jos luku ei onnistu
      */
    public void lueTiedostosta(String hakemisto) throws SailoException {
-       String tiedostonNimi = hakemisto + "/buildit.dat";
+       String tiedostonNimi = hakemisto + "/" + tiedostoNimi +  ".dat";
        File ftied = new File(tiedostonNimi);
        try {
            try (Scanner fi = new Scanner(new FileInputStream(ftied))) {
@@ -175,7 +176,7 @@ public class Buildit {
     * @throws SailoException jos talletus epäonnistuu
     */
    public void tallenna(String tiednimi) throws SailoException {
-       File tied = new File(tiednimi + "/buildit.dat");
+       File tied = new File(tiednimi + "/" + tiedostoNimi + ".dat");
        try {
            try (PrintStream fo = new PrintStream(new FileOutputStream(tied, false))) {
                for (int i = 0; i < getLkm(); i++) {
@@ -186,33 +187,6 @@ public class Buildit {
        } catch(Exception e) {
            throw new SailoException("Tiedosto " + tied.getAbsolutePath() + " ei aukea");
        }
-   }
-   
-   public static void main(String[] args) throws SailoException {
-       Buildit buildit = new Buildit();
-       
-       buildit.lueTiedostosta("Esimerkkiprofiili");
-       
-       Build build1 = new Build();
-       Build build2 = new Build();
-       
-       build1.tulosta(System.out);
-       build2.tulosta(System.out);
-       try {
-           buildit.lisaaBuild(build1);
-           buildit.lisaaBuild(build2);
-       } catch (SailoException e) {
-           // TODO Auto-generated catch block
-           e.printStackTrace();
-       }
-       
-       try {
-           buildit.tallenna("Esimerkkiprofiili");
-       } catch (SailoException e) {
-           // TODO Auto-generated catch block
-           e.printStackTrace();
-       }
-       
    }
    
    /**

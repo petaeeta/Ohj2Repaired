@@ -306,8 +306,13 @@ public class StatTrackerGUIController implements Initializable {
         
         List<Integer> BuildIdt = profiili.annaHahmonBuildit(hahmoKohdalla.getHid());
         for (int id : BuildIdt) {
-            Build vastaus = profiili.annaBuildViite(id);
-            if (vastaus.getNimi() != null) builditField.appendText(vastaus.getNimi() + "\n");
+            Build vastaus;
+            try {
+                vastaus = profiili.annaBuildViite(id);
+                if (vastaus.getNimi() != null) builditField.appendText(vastaus.getNimi() + "\n");
+            } catch (SailoException e) {
+                Dialogs.showMessageDialog(e.getMessage());
+            }
         }
         
         /*
