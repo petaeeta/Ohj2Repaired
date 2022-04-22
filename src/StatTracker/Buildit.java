@@ -52,7 +52,7 @@ public class Buildit {
    }
    
    /**
-    * Metodi joka antaa viitteen buildiin, jonka id-numero vastaa annettua build-id:tä
+    * Metodi joka antaa viitteen buildiin haluttua indeksiä vastaan taulukossa
     * @param i buildin indeksi taulukossa
     * @return viitteen buildiin
     * @throws IndexOutOfBoundsException jos i ei ole sallitulla alueella
@@ -60,6 +60,37 @@ public class Buildit {
    public Build anna(int i) throws IndexOutOfBoundsException{
        if (i < 0 || lkm <= i) throw new IndexOutOfBoundsException("Laiton indeksi: " + i);
        return taulukko[i];
+   }
+   
+   /**
+    * palauttaa viiteen buildiin joka vastaa parametrina annettua id:tä
+    * @param i buildin id jota vastaan etsitään build
+    * @return viite buildiin
+    */
+      public Build annaBuild(int i){
+          Build vastaus = null;
+          for(Build b : taulukko) {
+              if (b == null) continue;
+              if (b.getBid() == i) vastaus = b;
+          }
+          // Mikäli on oikein koodattu järjestelmä, näin ei pitäisi edes tapahtua. Printataan error jokatapauksessa.
+          if (vastaus == null) System.err.print("Buildia ei löydy taulukosta id:tä " + i + " vastaan");
+          return vastaus;
+      }
+   
+ /**
+ * Etsii buildin id:n perusteella, ja palauttaa buildin nimen. Tehty pääasiassa vaiheen 5 testaamista varten
+ * , mutta jätetään jos jostain syystä halutaankin vain nimi.
+ * @param i buildin id jota vastaan etsitään build
+ * @return buildin nimi
+ */
+   public String annaBuildNimi(int i){
+       String vastaus = "";
+       for(Build b : taulukko) {
+           if (b == null) continue;
+           if (b.getBid() == i) vastaus = b.getNimi();
+       }
+       return vastaus;
    }
    
    /**

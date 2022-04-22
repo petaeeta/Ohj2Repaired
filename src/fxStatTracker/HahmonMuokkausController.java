@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
  * Kontrolleri hahmon tilastojen muokkaamiselle
  * @author petteri
  * @version 15.2.2019
+ * @version 21.4.2022
  *
  */
 public class HahmonMuokkausController implements ModalControllerInterface<String> {
@@ -17,10 +18,11 @@ public class HahmonMuokkausController implements ModalControllerInterface<String
 
     @FXML void handleHahmonTilastoTallennus() {
         Dialogs.showMessageDialog("Ei osata vielä tallentaa");
+        ModalController.closeStage(muokkausvalmis);
     }
 
     @FXML void handlePeru() {
-        Dialogs.showMessageDialog("Perutaanko muutokset?");
+        ModalController.closeStage(muokkausvalmis);
     }
 
     @Override

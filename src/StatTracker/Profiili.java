@@ -28,8 +28,17 @@ public class Profiili {
      * Palauttaa hahmojen m‰‰r‰n
      * @return hahmojen m‰‰r‰n
      */
-    public int getHahmoja() {
+    public int getHahmoMaara() {
         return hahmot.getLkm();
+    }
+    
+    
+    /**
+     * Palauttaa buildien m‰‰r‰n
+     * @return bulidien m‰‰r‰n
+     */
+    public int getBuildMaara() {
+        return buildit.getLkm();
     }
     
     /**
@@ -40,6 +49,34 @@ public class Profiili {
      */
     public Hahmo annaHahmo(int i) throws IndexOutOfBoundsException{
         return hahmot.anna(i);
+    }
+    
+    /**
+     * Antaa listasta i:nnen buildin, joka joko on tai ei ole olemassa
+     * @param i monesko buildi palautetaan
+     * @return viite i:nteen buildiin
+     * @throws IndexOutOfBoundsException jos ei ole 
+     */
+    public Build annaBuild(int i) throws IndexOutOfBoundsException{
+        return buildit.anna(i);
+    }
+    
+    
+    /**
+     * Palauttaa id-numeroa vastaan viitteen buildiin, joka etsit‰‰n taulukosta
+     * @param i id-numero jota vastaan build annetaan
+     * @return viite buildiin, null jos ei olemassa
+     */
+    public Build annaBuildViite(int i) {
+        return buildit.annaBuild(i);
+    }
+    
+    /**
+     * @param i id-numero jota vastaavan buildin nimi palautetaan
+     * @return build joka vastasi Id-numeroa
+     */
+    public String annaBuildNimi(int i) {
+        return buildit.annaBuildNimi(i);
     }
 
     /**
@@ -91,10 +128,46 @@ public class Profiili {
     }
     
     /**
-     * Metodi tulostaa tallennettujen hahmojen overall-tilastot halutuille paikoilleen
+     * Metodi v‰litt‰‰ tallennettujen hahmojen yhteenlasketut tilastot halutuille paikoilleen
+     * @return paketin jossa on kaikkien hahmojen yhteenlasketut tilastot. Palautetaan Hahmo-oliona sill‰ Hahmo-oliosta lˆytyy kaikki tarvittavat attribuutit, oikeata hahmoa ei kuitenkaan luoda.
      */
-    public void tulostaOverallTilastot() {
-        //TODO: Overall tilastojen tulostus n‰yttˆˆn, toteutetaan kun tietoa oikeasti tallennetaan tiedostoihin.
+    /*
+     * public Hahmo getOverallTilastot() { if (hahmot.getLkm() < 1) return new
+     * Hahmo(false); return hahmot.getOverallTilastot(); }
+     */
+    
+    /**
+     * Metodi v‰litt‰‰ tallennettujen hahmojen yhteenlasketut tilastot halutuille paikoilleen
+     * @return paketin jossa on kaikkien hahmojen yhteenlasketut tilastot. Palautetaan Hahmo-oliona sill‰ Hahmo-oliosta lˆytyy kaikki tarvittavat attribuutit, oikeata hahmoa ei kuitenkaan luoda.
+     */
+    public int[] getOverallTilastot() {
+        if (hahmot.getLkm() < 1) return new int[4];
+        return hahmot.getOverallTilastot();
+    }
+    
+    /**
+     * @param args ei k‰ytˆss‰
+     */
+    public static void main(String[] args) {
+        Profiili profiili = new Profiili();
+        
+        Hahmo hahmo1 = new Hahmo();
+        Hahmo hahmo2 = new Hahmo();
+        
+        try {
+            profiili.LisaaHahmo(hahmo1);
+            profiili.LisaaHahmo(hahmo2);
+        } catch (SailoException e) {
+            System.out.println(e.getMessage());
+        }
+        
+        for (int i=0; i<profiili.getHahmoMaara(); i++) {
+            Hahmo hahmo = profiili.annaHahmo(i);
+            hahmo.tulosta(System.out);
+        }
+        
+        
+        
     }
 
 

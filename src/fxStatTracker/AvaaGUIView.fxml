@@ -16,7 +16,7 @@
    <bottom>
       <ButtonBar prefHeight="40.0">
         <buttons>
-            <Button mnemonicParsing="false" onAction="#handlePeruuta" text="Peruuta" />
+            <Button cancelButton="true" mnemonicParsing="false" onAction="#handlePeruuta" text="Peruuta" />
         </buttons>
          <padding>
             <Insets left="5.0" right="5.0" />
@@ -77,7 +77,7 @@
             </Label>
             <ComboBox fx:id="comboboxProfiili" promptText="Saved Profiles..." GridPane.columnIndex="1" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1" />
             <TextField fx:id="textUusiProfiili" GridPane.columnIndex="1" />
-            <Button mnemonicParsing="false" onAction="#handleUusiProfiili" text="Luo uusi profiili" GridPane.columnIndex="2">
+            <Button defaultButton="true" mnemonicParsing="false" onAction="#handleUusiProfiili" text="Luo uusi profiili" GridPane.columnIndex="2">
                <GridPane.margin>
                   <Insets left="5.0" />
                </GridPane.margin>

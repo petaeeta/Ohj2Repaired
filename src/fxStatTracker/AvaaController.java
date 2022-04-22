@@ -13,6 +13,7 @@ import javafx.stage.Stage;
  * toteutetaan kun tietoa oikeasti kirjoitetaan ylös, mikäli päätetään tehdä lukuisia profiileja yhden sijasta.
  * @author Petteri
  * @version 14.2.2019
+ * @version 21.4.2022
  */
 public class AvaaController implements ModalControllerInterface<String> {
 
