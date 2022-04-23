@@ -112,7 +112,7 @@
                <center>
                   <ScrollPane fx:id="panelHahmo" fitToWidth="true" pannable="true" BorderPane.alignment="CENTER">
                      <content>
-                        <GridPane alignment="CENTER" gridLinesVisible="true">
+                        <GridPane fx:id="gridHahmo" alignment="CENTER" gridLinesVisible="true">
                           <columnConstraints>
                             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
                             <ColumnConstraints hgrow="SOMETIMES" />
@@ -172,6 +172,7 @@
                               <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                            </HBox.margin>
                         </Button>
+                        <Button mnemonicParsing="false" onMouseClicked="#handlePoistaHahmonBuild" text="Poista hahmon build" />
                      </children>
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -304,6 +305,7 @@
                               <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                            </HBox.margin>
                         </Button>
+                        <Button mnemonicParsing="false" onAction="#handleBuildMuokkaus" text="Muokkaa buildia" />
                         <Button mnemonicParsing="false" onMouseClicked="#handlePoistaBuild" text="Poista build">
                            <HBox.margin>
                               <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />

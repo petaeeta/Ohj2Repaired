@@ -15,10 +15,11 @@ import java.util.Scanner;
  */
 public class Hahmot {
     private int lkm;
-    private int maxlkm = 8; // k‰tet‰‰n vasta kun tietorakennetta aletaan kasvattamaan rajatta
+    private int maxlkm = 8;
     private Hahmo[] hahmot = new Hahmo[maxlkm];
     private String profiiliNimi = "profiili";
     private String tiedostoNimi = "hahmot";
+    private boolean muutettu = false;
     
     /**
      * Hahmot luokan konstruktori, joka luo taulukon, jonne voi
@@ -33,31 +34,30 @@ public class Hahmot {
     /**
      * Metodi hahmojen lis‰‰miseksi taulukkoon 
      * @param hahmo Hahmo, joka taulukkoon lis‰t‰‰n.
-     * @throws SailoException jos tietorakenne on t‰ynn‰
      * @example
      * <pre name="test">
      * #THROWS SailoException
      * Hahmot hahmot = new Hahmot();
      * Hahmo hahmo1 = new Hahmo(), hahmo2 = new Hahmo();
      * hahmot.getLkm() === 0;
-     * hahmot.LisaaHahmo(hahmo1); hahmot.getLkm() === 1;
-     * hahmot.LisaaHahmo(hahmo2); hahmot.getLkm() === 2;
-     * hahmot.LisaaHahmo(hahmo1); hahmot.getLkm() === 3;
+     * hahmot.lisaaHahmo(hahmo1); hahmot.getLkm() === 1;
+     * hahmot.lisaaHahmo(hahmo2); hahmot.getLkm() === 2;
+     * hahmot.lisaaHahmo(hahmo1); hahmot.getLkm() === 3;
      * hahmot.anna(0) === hahmo1;
      * hahmot.anna(1) === hahmo2;
      * hahmot.anna(2) === hahmo1;
      * hahmot.anna(1) == hahmo1 === false;
      * hahmot.anna(1) == hahmo2 === true;
      * hahmot.anna(3) === hahmo1; #THROWS IndexOutOfBoundsException
-     * hahmot.LisaaHahmo(hahmo1); hahmot.getLkm() === 4;
-     * hahmot.LisaaHahmo(hahmo1); hahmot.getLkm() === 5;
-     * hahmot.LisaaHahmo(hahmo1); hahmot.getLkm() === 6;
-     * hahmot.LisaaHahmo(hahmo1); hahmot.getLkm() === 7;
-     * hahmot.LisaaHahmo(hahmo1); hahmot.getLkm() === 8;
-     * hahmot.LisaaHahmo(hahmo1); #THROWS SailoException
+     * hahmot.lisaaHahmo(hahmo1); hahmot.getLkm() === 4;
+     * hahmot.lisaaHahmo(hahmo1); hahmot.getLkm() === 5;
+     * hahmot.lisaaHahmo(hahmo1); hahmot.getLkm() === 6;
+     * hahmot.lisaaHahmo(hahmo1); hahmot.getLkm() === 7;
+     * hahmot.lisaaHahmo(hahmo1); hahmot.getLkm() === 8;
      * </pre>
      */
-    public void lisaaHahmo(Hahmo hahmo) throws SailoException {
+    public void lisaaHahmo(Hahmo hahmo) {
+        if (hahmo.getHid() < 0) hahmo.rekisteroi();
         if (lkm >= hahmot.length) {
             maxlkm += 20;
             Hahmo[] uusi = new Hahmo[maxlkm];
@@ -113,8 +113,8 @@ public class Hahmot {
      * Hahmot hahmot = new Hahmot();
      * Hahmo hahmo1 = new Hahmo("Kalle", 3, 5, 12, 2);
      * Hahmo hahmo2 = new Hahmo("Ville", 1, 33, 74, 100);
-     * hahmot.LisaaHahmo(hahmo1);
-     * hahmot.LisaaHahmo(hahmo2);
+     * hahmot.lisaaHahmo(hahmo1);
+     * hahmot.lisaaHahmo(hahmo2);
      * int[] overall = hahmot.getOverallTilastot();
      * overall[0] === 3 + 1;
      * overall[1] === 5 + 33;
@@ -164,8 +164,8 @@ public class Hahmot {
      * Hahmot hahmot = new Hahmot();
      * Hahmo hahmo1 = new Hahmo("Kalle", 3, 5, 12, 2);
      * Hahmo hahmo2 = new Hahmo("Ville", 1, 33, 74, 100);
-     * hahmot.LisaaHahmo(hahmo1);
-     * hahmot.LisaaHahmo(hahmo2);
+     * hahmot.lisaaHahmo(hahmo1);
+     * hahmot.lisaaHahmo(hahmo2);
      * hahmot.anna(0) === hahmo1;
      * hahmot.anna(1) === hahmo2;
      * </pre>
@@ -204,6 +204,23 @@ public class Hahmot {
     }
     
     /**
+     * Etsii korvattavan hahmon. Jos ei lˆydy, lis‰‰ hahmon.
+     * @param hahmo uusi lis‰tt‰v‰ hahmo
+     * @throws SailoException jos jotain menee vikaan
+     */
+    public void korvaaTaiLisaa(Hahmo hahmo) throws SailoException {
+        int id = hahmo.getHid();
+        for (int i = 0; i < lkm; i++) {
+            if (hahmot[i].getHid() == id) {
+                hahmot[i] = hahmo;
+                muutettu = true;
+                return;
+            }
+        }
+        lisaaHahmo(hahmo);
+    }
+    
+    /**
      * Lukee tiedostosta jolla on jo asetettu profiilinimi
      * @throws SailoException pik‰li ei lˆydy
      */
@@ -237,40 +254,6 @@ public class Hahmot {
            * SailoException("Ongelmia tiedoston kanssa: " + e.getMessage()); }
            */
     }
-    
-    /**
-     * @param args ei k‰ytˆss‰
-     */
-    public static void main(String[] args) {
-        Hahmot hahmot = new Hahmot();
-        
-        try {
-            hahmot.lueTiedostosta("Esimerkkiprofiili");
-            
-        }catch(SailoException e) {
-            System.err.println("Ei voi lukea " + e.getMessage());
-        }
-        
-        Hahmo hahmo1 = new Hahmo();
-        Hahmo hahmo2 = new Hahmo();
-        
-        hahmo1.tulosta(System.out);
-        hahmo2.tulosta(System.out);
-        try {
-            hahmot.lisaaHahmo(hahmo1);
-            hahmot.lisaaHahmo(hahmo2);
-        } catch (SailoException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-        try {
-            hahmot.tallenna("Esimerkkiprofiili");
-        } catch (SailoException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    
-    }
+   
 
 }

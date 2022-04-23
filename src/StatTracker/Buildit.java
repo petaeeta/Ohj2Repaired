@@ -20,6 +20,7 @@ public class Buildit {
    private int lkm;
    private String profiiliNimi = "profiili";
    private String tiedostoNimi = "buildit";
+   private boolean muutettu = false;
    
    /**
     * Konstruktori oletusbuilditaulukon luomiselle
@@ -31,7 +32,6 @@ public class Buildit {
    /**
     * Metodi buildien lis‰‰miselle listaan
     * @param build joka listaan lis‰t‰‰n
-    * @throws SailoException jos taulukossa on liikaa alkioita
     * @example
     * <pre name="test">
     * #THROWS SailoException
@@ -52,7 +52,8 @@ public class Buildit {
     * buildit.lisaaBuild(build1); buildit.getLkm() === 5;
     * </pre>
     */
-   public void lisaaBuild(Build build) throws SailoException {
+   public void lisaaBuild(Build build) {
+       if (build.getBid() < 0) build.rekisteroi();
        if (lkm >= taulukko.length) {
            maxlkm += 20;
            Build[] uusi = new Build[maxlkm];
@@ -160,6 +161,25 @@ public class Buildit {
           * catch (IOException e) { throw new
           * SailoException("Ongelmia tiedoston kanssa: " + e.getMessage()); }
           */
+   }
+   
+   
+    /**
+     * Etsii korvattavan buildin. Jos ei lˆydy, lis‰‰ buildin.
+    * @param build uusi lis‰tt‰v‰ tai korvattava build
+    */
+   public void korvaaTaiLisaa(Build build) {
+       int id = build.getBid();
+       for (int i = 0; i < lkm; i++) {
+           if (taulukko[i].getBid() == id) {
+               taulukko[i] = build;
+               muutettu = true;
+               return;
+           }
+       }
+       lisaaBuild(build);
+       muutettu = true;
+       
    }
    
    /**

@@ -12,7 +12,7 @@ import fi.jyu.mit.ohj2.Mjonot;
  *
  */
 public class Build {
-    private int bid;
+    private int bid = -1;
     private String nimi = "";
     private String kuvaus = "";
     private static int seuraava_bid = 1;
@@ -32,6 +32,17 @@ public class Build {
         }
     }
     
+    /**
+     * Luo buildin jolle ennaltam‰‰ritet‰‰n parametrit
+     * @param bid Build id
+     * @param nimi Build nimi
+     * @param kuvaus Build kuvaus
+     */
+    public Build(int bid, String nimi, String kuvaus) {
+        this.bid = bid;
+        this.nimi = nimi;
+        this.kuvaus = kuvaus;
+    }
     
     /**
      * Tekee tyhj‰n buildin, sek‰ kysyy halutaanko t‰m‰ rekisterˆid‰.
@@ -84,12 +95,41 @@ public class Build {
      * build2.getKuvaus() === "Lorem Ipsum"
      * </pre>
      */
-    private int rekisteroi() {
-        bid = seuraava_bid;
+    public int rekisteroi() {
+        this.bid = seuraava_bid;
         seuraava_bid++;
-        return bid;
-        
+        return this.bid;
     }
+    
+    /** Luo koloonin itsest‰‰n
+     * @return klooni
+     */
+    public Build kloonaa() {
+        return new Build(bid, nimi, kuvaus);
+     }  
+    
+    /**
+     * Yritt‰‰ asettaa oikeellisen parametrin, palauttaa null jos onnistui, palauttaa virheen jos ei.
+     * @param k parametri jolle halutaan muutos tehd‰
+     * @param s merkkijono jota luetaan
+     * @return virheviestin, null jos kaikki ok.
+     */
+    public String aseta(int k, String s) {
+        String tjono = s.trim();
+        switch(k) {
+        case 0:
+            if (tjono == "") return "Buildin nimi ei saa olla tyhj‰";
+            nimi = tjono;
+            return null;
+        case 1:
+            if (tjono == "") return "Buildin kuvaus ei saa olla tyhj‰";
+            kuvaus = tjono;
+            return null;
+        default:
+            return null;
+        }
+    }   
+    
     /**
      * Tulostaa haluttuun tietovirtaan itsens‰
      * @param ps tietovirta johon haluttu build tulostetaan
@@ -130,6 +170,5 @@ public class Build {
     @Override
     public String toString() {
         return "" + bid + "|" + nimi + "|" + kuvaus;
-    }    
-
+    } 
 }

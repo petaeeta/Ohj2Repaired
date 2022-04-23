@@ -1,6 +1,5 @@
 package fxStatTracker;
 
-import java.io.PrintStream;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -10,10 +9,11 @@ import fi.jyu.mit.fxgui.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.text.Font;
+import javafx.scene.layout.GridPane;
 
 /**
  * kontrolleri StatTrackerin p‰‰ikkunalle
@@ -42,6 +42,7 @@ public class StatTrackerGUIController implements Initializable {
     @FXML private TextField overallKuolemat;
     @FXML private TextField overallWl;
     @FXML private TextField overallKd;
+    @FXML private GridPane gridHahmo;
     
     /**
      * Uuden hahmon k‰sittely
@@ -61,14 +62,13 @@ public class StatTrackerGUIController implements Initializable {
      * Hahmon muokkausikkuna
      */
     @FXML private void handleHahmonTilastoja() {
-        ModalController.showModal(StatTrackerGUIController.class.getResource("HahmonMuokkausGUIView.fxml"), "Muokkaus", null, "");
+        avaaHahmonMuokkaus();
        }
     
     /**
      * Buildien hallinta
      */
     @FXML private void handleBuild() {
-        ModalController.showModal(StatTrackerGUIController.class.getResource("BuildLuontiGUIView.fxml"), "", null, "");
         //uusiBuild();
         uusiTemplateBuild();
        }
@@ -139,6 +139,15 @@ public class StatTrackerGUIController implements Initializable {
     @FXML private void handlePoistaBuild() {
         Dialogs.showMessageDialog("Ei osata poistaa");
     }
+    
+    @FXML void handleBuildMuokkaus() {
+        avaaBuildinMuokkaus();
+    }
+    
+    @FXML void handlePoistaHahmonBuild() {
+        Dialogs.showMessageDialog("Ei osata poistaa");
+    }
+    
 
     /**
      * Metodi jota kysyt‰‰n sulkemisen yhteydess‰ varmistaakseen,
@@ -161,6 +170,10 @@ public class StatTrackerGUIController implements Initializable {
     //private TextArea areaBuild = new TextArea();
     private Hahmo hahmoKohdalla;
     private Build buildKohdalla;
+    private static Hahmo apuhahmo = new Hahmo(false);
+    private TextField edits[];
+    private ListChooser<Build> chooserHahmoBuildit;
+    private TextArea hahmobuildit;
     private int hid;
 
     @Override
@@ -176,12 +189,84 @@ public class StatTrackerGUIController implements Initializable {
         panelHahmo.setFitToHeight(true);
         panelBuild.setFitToHeight(true);
         
+        edits = HahmonMuokkausController.luoKentat(gridHahmo, apuhahmo.getKenttia(), false);
+        
+        Label label = new Label("Hahmon Buildit:");
+        chooserHahmoBuildit = new ListChooser<>();
+        gridHahmo.add(label, 0, apuhahmo.getKenttia());
+        gridHahmo.add(chooserHahmoBuildit, 1, apuhahmo.getKenttia());
+        
+        gridHahmo.setGridLinesVisible(true);
+        
         chooserHahmot.clear();
-        chooserHahmot.addSelectionListener(e -> naytaHahmo());
+        chooserHahmot.addSelectionListener(e -> laitaHahmo());
         
         chooserBuildit.clear();
         chooserBuildit.addSelectionListener(e -> naytaBuild());
+        
+        chooserHahmoBuildit.clear();
+        chooserHahmoBuildit.setPrefHeight(160);
+        //chooserHahmoBuildit.addSelectionListener(e -> naytaHahmoBuild());
     }
+     
+    /*
+     * Laittaa hahmon tiedot kenttiin
+     */
+    private void laitaHahmo() {
+        hahmoKohdalla = chooserHahmot.getSelectedObject();
+        chooserHahmoBuildit.clear();
+        if (hahmoKohdalla == null) return;
+        HahmonMuokkausController.laitaHahmo(edits, hahmoKohdalla, apuhahmo.getKenttia());
+        List<Integer> BuildIdt = profiili.annaHahmonBuildit(hahmoKohdalla.getHid());
+        for (int id : BuildIdt) {
+            Build vastaus;
+            try {
+                vastaus = profiili.annaBuildViite(id);
+                if (vastaus.getNimi() != null) chooserHahmoBuildit.add(vastaus.getNimi(), vastaus);
+            } catch (SailoException e) {
+                Dialogs.showMessageDialog(e.getMessage());
+            }
+        }
+    }
+    
+    /*
+     * Metodi jolla muokataan olemassaolevaa hahmoa
+     */
+    private void avaaHahmonMuokkaus() {
+        try {
+        hahmoKohdalla = chooserHahmot.getSelectedObject();
+        if (hahmoKohdalla == null) return;
+        Hahmo hahmo = new Hahmo(false);
+        hahmo = HahmonMuokkausController.kysyHahmo(null, hahmoKohdalla.kloonaa());
+        if (hahmo == null) return;
+        profiili.korvaaTaiLisaa(hahmo);
+        haeHahmot(hahmo.getHid());
+        updateOverall();}
+        catch(SailoException e) {
+            Dialogs.showMessageDialog(e.getMessage());
+        }
+    }
+    
+    /*
+     * Metodi jolla muokataan olemassaolevaa buildia
+     */
+    private void avaaBuildinMuokkaus() {
+        try {
+        buildKohdalla = chooserBuildit.getSelectedObject();
+        if (buildKohdalla == null) return;
+        Build build = new Build(false);
+        build = BuildLuontiController.kysyBuild(null, buildKohdalla.kloonaa());
+        if (build == null) return;
+        profiili.korvaaTaiLisaa(build);
+        haeBuildit(build.getBid());
+        laitaHahmo();
+        updateOverall();}
+        catch(SailoException e) {
+            Dialogs.showMessageDialog(e.getMessage());
+        }
+    }
+    
+    
     
     /*
      * P‰ivitt‰‰ overall-tilastot
@@ -201,41 +286,51 @@ public class StatTrackerGUIController implements Initializable {
      * Luo uuden hahmon
      */
     public void uusiHahmo() {
-        Hahmo hahmo = new Hahmo();
         try {
+            Hahmo hahmo = new Hahmo(false);
+            hahmo = HahmonMuokkausController.kysyHahmo(null, hahmo);
+            if ( hahmo == null) return;
+            hahmo.rekisteroi();
             profiili.LisaaHahmo(hahmo);
+            haeHahmot(hahmo.getHid());
+            updateOverall();
         } catch (SailoException e) {
             Dialogs.showMessageDialog("Virhe uuden luomisessa: " + e.getMessage());
             return;
         }
-        haeHahmot(hahmo.getHid());
-        updateOverall();
     }
     
     /**
      * Luo uuden buildin, mutte
      */
     private void uusiTemplateBuild() {
-        Build build = new Build();
-        
         try {
+            Build build = new Build(false);
+            build = BuildLuontiController.kysyBuild(null, build);
+            if (build == null) return;
+            build.rekisteroi();
             profiili.LisaaBuild(build);
+            haeBuildit(build.getBid());
         } catch (Exception e) {
             Dialogs.showMessageDialog("Virhe uuden buildin luomisessa: " + e.getMessage());
             return;
         }
-        haeBuildit(build.getBid());
     }
     
     /**
      * Luo uuden buildin
      */
-    /*
-     * public void uusiBuild() { try { if (hahmoKohdalla == null) return; Build
-     * build = new Build(); profiili.LisaaBuild(build);
-     * haeHahmot(hahmoKohdalla.getHid()); } catch (SailoException e) {
-     * Dialogs.showMessageDialog(e.getMessage()); } }
-     */
+    
+      public void uusiBuild() { 
+          try { 
+              Build build = new Build();
+              profiili.LisaaBuild(build);
+              
+      
+              haeHahmot(hahmoKohdalla.getHid());
+              } catch (SailoException e) {
+                  Dialogs.showMessageDialog(e.getMessage()); } }
+     
     
     
     /**
@@ -273,12 +368,11 @@ public class StatTrackerGUIController implements Initializable {
         buildKohdalla = chooserBuildit.getSelectedObject();
         
         if (buildKohdalla == null || hahmoKohdalla == null) {
-            System.out.println("Buildia ei annettu sill‰ toinen valinnoista on tyhj‰ \nValittu hahmo: " + hahmoKohdalla + "\nValittu build" + buildKohdalla);
             Dialogs.showMessageDialog("Build voidaan antaa hahmolle vain jos build sek‰ hahmo ovat valittuina");
             return;
         }
         profiili.LisaaHahmolleBuild(hahmoKohdalla.getHid(), buildKohdalla.getBid());
-        naytaHahmo();
+        laitaHahmo();
     }
 
     /**

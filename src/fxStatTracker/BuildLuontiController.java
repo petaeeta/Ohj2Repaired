@@ -1,9 +1,12 @@
 package fxStatTracker;
 
+import StatTracker.Build;
 import fi.jyu.mit.fxgui.*;
-import fi.jyu.mit.fxgui.Dialogs;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 /**
  * Kontrolleri buildien luomiseen
@@ -12,25 +15,25 @@ import javafx.scene.control.Button;
  * @version 21.4.2022
  *
  */
-public class BuildLuontiController implements ModalControllerInterface<String> {
+public class BuildLuontiController implements ModalControllerInterface<Build> {
 
     @FXML private Button tallenna;
+    @FXML private TextField buildNimiField;
+    @FXML private TextArea buildKuvausArea;
     
     
     @FXML void handleBuildTallenna() {
-        Dialogs.showMessageDialog("Ei osata viel‰ tallentaa");
         ModalController.closeStage(tallenna);
     }
 
     @FXML void handleBuildperuuta() {
-        Dialogs.showMessageDialog("Perutaanko muutokset?");
+        buildKohdalla = null;
         ModalController.closeStage(tallenna);
     }
 
     @Override
-    public String getResult() {
-        // TODO Auto-generated method stub
-        return null;
+    public Build getResult() {
+        return buildKohdalla;
     }
 
     @Override
@@ -40,9 +43,71 @@ public class BuildLuontiController implements ModalControllerInterface<String> {
     }
 
     @Override
-    public void setDefault(String oletus) {
-        // TODO Auto-generated method stub
-        
+    public void setDefault(Build oletus) {
+        alusta();
+        buildKohdalla = oletus;
     }
+    
+    //==========================================================================
+    private static Build apubuild = new Build(false);
+    private Build buildKohdalla;
+    
+    /**
+     * Tekee tarvittavat alustukset
+     */
+    protected void alusta() {
+        buildNimiField.setOnKeyReleased(e -> kasitteleMuutosBuildiin((TextField)(e.getSource()), 0));
+        buildKuvausArea.setOnKeyReleased(e -> kasitteleMuutosBuildiin((TextArea)(e.getSource()), 1));
+    }
+    
+    /**
+     * K‰sittelee tehdyt muutokset.
+     * @param edit tekstikentt‰ jota editoidaan
+     * @param k arvo joka kent‰lle halutaan
+     */
+    protected void kasitteleMuutosBuildiin(TextField edit, int k) {
+        if (buildKohdalla == null) return;
+            String s = edit.getText();
+            String virhe = null; 
+            virhe = buildKohdalla.aseta(k, s);
+        if (virhe == null) {
+            Dialogs.setToolTipText(edit, "");
+            edit.getStyleClass().removeAll("virhe");
+        }
+        else { 
+            Dialogs.setToolTipText(edit, virhe);
+            edit.getStyleClass().add("Virhe");
+        }
+    }
+    
+    /**
+     * K‰sittelee tehdyt muutokset.
+     * @param edit tekstikentt‰ jota editoidaan
+     * @param k arvo joka kent‰lle halutaan
+     */
+    protected void kasitteleMuutosBuildiin(TextArea edit, int k) {
+        if (buildKohdalla == null) return;
+            String s = edit.getText();
+            String virhe = null; 
+            virhe = buildKohdalla.aseta(k, s);
+        if (virhe == null) {
+            Dialogs.setToolTipText(edit, "");
+            edit.getStyleClass().removeAll("virhe");
+        }
+        else { 
+            Dialogs.setToolTipText(edit, virhe);
+            edit.getStyleClass().add("Virhe");
+        }
+    }
+    
+    /**
+     * @param modalityStage mille ollaan modaalisia
+     * @param oletus mit‰ dataa k‰ytet‰‰n oletuksena
+     * @return null jos painetaan cancel, muuten uusi build
+     */
+    public static Build kysyBuild(Stage modalityStage, Build oletus) {
+        return ModalController.showModal(StatTrackerGUIController.class.getResource("BuildLuontiGUIView.fxml"), "Buildin Tiedot", modalityStage, oletus);
+    }
+    
     
 }

@@ -25,13 +25,13 @@
         </rowConstraints>
          <children>
             <Label alignment="CENTER" text="Anna buildille nimi:" />
-            <TextField text="Esimerkkinimi" GridPane.columnIndex="1">
+            <TextField fx:id="buildNimiField" GridPane.columnIndex="1">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>
             </TextField>
             <Label text="Kuvaus buildista" GridPane.rowIndex="1" />
-            <TextArea prefHeight="200.0" prefWidth="200.0" text="Tätä buildia käytetään, kun&#10;ei enää osata tehdä muuta" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <TextArea fx:id="buildKuvausArea" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </GridPane.margin>

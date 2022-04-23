@@ -209,6 +209,26 @@ public class Profiili {
     public String getProfiiliNimi() {
         return profiiliNimi;
     }
+    
+    
+    /**
+     * Korvaa tai lisää hahmoa vastaan löytyneen hahmon
+     * @param hahmo joka korvataan tai lisätään
+     * @throws SailoException jos ei onnistu
+     */
+    public void korvaaTaiLisaa(Hahmo hahmo) throws SailoException {
+        hahmot.korvaaTaiLisaa(hahmo);
+    }
+    
+    /**
+     * Korvaa tai lisää buildia vastaan löytyneen buildin
+     * @param build joka korvataan tai lisätään
+     * @throws SailoException jos ei onnistu
+     */
+    public void korvaaTaiLisaa(Build build) throws SailoException {
+        buildit.korvaaTaiLisaa(build);
+        
+    }
 
     /**
      * Lukee tiedot profiilista jonka nimi annetaan parametrina
@@ -237,7 +257,5 @@ public class Profiili {
         profiili.tallenna("Profiili2");
         
     }
-
-
 
 }

@@ -14,7 +14,7 @@
    <center>
       <BorderPane>
          <center>
-            <GridPane alignment="CENTER" hgap="10.0" BorderPane.alignment="CENTER">
+            <GridPane fx:id="gridMuokkaus" alignment="CENTER" hgap="10.0" BorderPane.alignment="CENTER">
                <columnConstraints>
                   <ColumnConstraints halignment="LEFT" hgrow="NEVER" minWidth="60.0" />
                   <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" />

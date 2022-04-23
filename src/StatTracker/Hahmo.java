@@ -11,14 +11,110 @@ import fi.jyu.mit.ohj2.Mjonot;
  * @version 29.3.2019
  *
  */
-public class Hahmo {
-    private int hid;
+public class Hahmo{
+    private int hid = -1;
     private static int seuraava_hid = 1;
     private String nimi = "";
     private int voitot;
     private int haviot;
     private int tapot;
     private int kuolemat;  
+    
+    /**
+     * Palauttaa label-nimen perustuen lukuun
+     * @param k luku jota vastaan label annetaan
+     * @return oikea label
+     */
+    public String getKysymys(int k) {
+        switch(k) {
+        case 0:
+            return "Hahmo-id:";
+        case 1:
+            return "Nimi:" ;
+        case 2:
+            return "Tapot:";
+        case 3:
+            return "Kuolemat:";
+        case 4:
+            return "Voitot:";
+        case 5:
+            return "H‰viˆt:";
+        case 6:
+            return "K/D-ratio:";
+        case 7:
+            return "W/L-ratio:";
+        default:
+            return "";
+        }
+    }
+    
+    /**
+     * Arvoja perustuen lukuun
+     * @param k luku jota vastaan label annetaan
+     * @return oikea label
+     */
+    public String anna(int k) {
+        switch(k) {
+        case 0:
+            return "" + hid;
+        case 1:
+            return nimi;
+        case 2:
+            return "" + tapot;
+        case 3:
+            return "" + kuolemat;
+        case 4:
+            return "" + voitot;
+        case 5:
+            return "" + haviot;
+        case 6:
+            return "" + intSuhde(tapot, kuolemat);
+        case 7:
+            return "" + intSuhde(voitot, haviot);
+        default:
+            return "Ei";
+        }
+    }
+    
+    /**
+     * @param k luku jota vastaan asetetaan oikea arvo
+     * @param jono merkkijono joka olisi uusi arvo
+     * @return Virheilmoitus, null jos kaikki ok
+     */
+    public String aseta(int k, String jono) {
+        try {
+        if (jono == "") return null;
+        String tjono = jono.replaceAll("\\s+", "");
+        switch(k) {
+        case 1:
+            nimi = jono.trim();
+            return null;
+        case 2:
+            int arvo = Integer.parseInt(tjono);
+            if (arvo < 0) return "Arvo ei saa olla negatiivinen";
+            tapot = arvo;
+            return null;
+        case 3:
+            arvo = Integer.parseInt(tjono);
+            if (arvo < 0) return "Arvo ei saa olla negatiivinen";
+            kuolemat = arvo;
+            return null;
+        case 4:
+            arvo = Integer.parseInt(tjono);
+            if (arvo < 0) return "Arvo ei saa olla negatiivinen";
+            voitot = arvo;
+            return null;
+        case 5:
+            arvo = Integer.parseInt(tjono);
+            if (arvo < 0) return "Arvo ei saa olla negatiivinen";
+            haviot = arvo;
+            return null;
+        default:
+            return null;
+        }} catch(NumberFormatException e) {
+            return "Annettua arvoa ei tunnisteta luvuksi";
+        }
+    }  
     
     /**
      * Luo oletushahmon ilman parametreja randomisoimalla hahmon sis‰llˆn. Tehty testaamista varten.
@@ -75,6 +171,32 @@ public class Hahmo {
         hid = rekisteroi();
     }
     
+    
+    /**
+     * Parametrillinen versio hahmosta, jolla on jo hid
+     * @param hid hahmon hahmo-id
+     * @param nimi hahmon nimi
+     * @param voitot hahmon voitot
+     * @param haviot hahmon h‰viˆt
+     * @param tapot hahmon tapot
+     * @param kuolemat hahmon kuolemat
+     */
+    public Hahmo(int hid, String nimi, int voitot, int haviot, int tapot, int kuolemat) {
+        this.hid = hid;
+        this.nimi = nimi;
+        this.voitot = voitot;
+        this.haviot = haviot;
+        this.tapot = tapot;
+        this.kuolemat = kuolemat;
+    }
+    
+    
+    /** Luo koloonin itsest‰‰n
+     * @return klooni
+     */
+    public Hahmo kloonaa() {
+        return new Hahmo(hid, nimi, voitot, haviot, tapot, kuolemat);
+     }  
     /**
      * Antaa hahmolle oikean id-numeron
      * @return hahmon uusi id
@@ -211,6 +333,30 @@ public class Hahmo {
         if (hid >= seuraava_hid) seuraava_hid = hid + 1;
     }
     
+    /**
+     * Palauttaa hahmon kenttien m‰‰r‰n
+     * @return kenttien m‰‰r‰
+     */
+    public int getKenttia() {
+        return 8;
+    }
+    
+    /**
+     * Palauttaa hahmon kenttien m‰‰r‰n
+     * @return kenttien m‰‰r‰
+     */
+    public int getEditKenttia() {
+        return 6;
+    }
+    
+    /**
+     * Palauttaa ensimm‰isen mielekk‰‰n kent‰n
+     * @return ensimm‰inen kentt‰
+     */
+    public int ekaKentta() {
+        return 1;
+    }
+    
     
     /**
      * Get-metodi seuraavan luotavan hahmon id-numerolle. Luotu l‰hinn‰ Junit-testeille ettei tarvitse pit‰‰ seuraava_hid attribuuttia public n‰kyvyydell‰.
@@ -218,6 +364,13 @@ public class Hahmo {
      */
     public int getSeuraavaHid() {
         return seuraava_hid;
+    }
+    
+    /*
+     * Palauttaa suhteen kahden int-luvun v‰lill‰. K‰ytet‰‰n kd:n ja wl:n laskemiseksi
+     */
+    private double intSuhde(int jaettava, int jakaja) {
+        return Double.valueOf(jaettava)/Double.valueOf(jakaja);
     }
     
     /**
@@ -246,5 +399,6 @@ public class Hahmo {
     @Override
     public String toString() {
         return "" + hid + "|" + nimi + "|" + voitot + "|" + haviot + "|" + tapot + "|" + kuolemat;
-    }    
+    }
+
 }
