@@ -44,8 +44,8 @@ public class BuildLuontiController implements ModalControllerInterface<Build> {
 
     @Override
     public void setDefault(Build oletus) {
-        alusta();
         buildKohdalla = oletus;
+        alusta();
     }
     
     //==========================================================================
@@ -58,6 +58,8 @@ public class BuildLuontiController implements ModalControllerInterface<Build> {
     protected void alusta() {
         buildNimiField.setOnKeyReleased(e -> kasitteleMuutosBuildiin((TextField)(e.getSource()), 0));
         buildKuvausArea.setOnKeyReleased(e -> kasitteleMuutosBuildiin((TextArea)(e.getSource()), 1));
+        buildNimiField.setText(buildKohdalla.getNimi());
+        buildKuvausArea.setText(buildKohdalla.getKuvaus());
     }
     
     /**
