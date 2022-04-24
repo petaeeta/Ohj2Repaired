@@ -4,6 +4,7 @@ package StatTracker;
  * Poikkeusluokka tietorakenteesta aiheutuville poikkeuksille
  * @author petteri
  * @version 22.4.2019
+ * @Version 24.4.2022
  *
  */
 public class SailoException extends Exception {

@@ -5,12 +5,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+
+import fi.jyu.mit.ohj2.WildChars;
 
 /**
  * 
  * @author petteri
  * @version 29.3.2019
+ * @Version 24.4.2022
  *
  */
 public class Hahmot {
@@ -65,9 +70,17 @@ public class Hahmot {
                 uusi[i] = hahmot[i];
             }
             hahmot = uusi;
+            muutettu = true;
         }
-        hahmot[lkm] = hahmo;
-        lkm++;
+        for (int i = 0; i < hahmot.length; i++) {
+            if (hahmot[i] == null) {
+                hahmot[i] = hahmo;
+                lkm++;
+                muutettu = true;
+                return;
+                
+            }
+        }
     }
     
     
@@ -88,6 +101,14 @@ public class Hahmot {
      */
     public int getLkm() {
         return lkm;
+    }
+    
+    /**
+     * Palauttaa arvon perustuen siihen onko tallennuskriittisiä tiedostoja muutettu 
+     * @return muutettu-arvon
+    */
+    public boolean getMuutettu() {
+        return muutettu;
     }
     
     /**
@@ -125,7 +146,7 @@ public class Hahmot {
     public int[] getOverallTilastot() {
         int[] stats = new int[4];
         for (Hahmo i : hahmot) {
-            if (i == null) break;
+            if (i == null) continue;
             int[] hahmoStats = i.getStats();
             for (int j = 0; j<stats.length; j++) {
                 stats[j] += hahmoStats[j];
@@ -193,14 +214,14 @@ public class Hahmot {
         File tied = new File(tiednimi + "/" + tiedostoNimi + ".dat");
         try {
             try (PrintStream fo = new PrintStream(new FileOutputStream(tied, false))) {
-                for (int i = 0; i<getLkm(); i++) {
-                    Hahmo hahmo = anna(i);
-                    fo.println(hahmo);
+                for (int i = 0; i < hahmot.length; i++) {
+                    if (hahmot[i] != null)fo.println(hahmot[i]);
                 }
             }
         } catch(Exception e) {
             throw new SailoException("Tiedosto " + tied.getAbsolutePath() + " ei aukea");
         }
+        muutettu = false;
     }
     
     /**
@@ -210,14 +231,47 @@ public class Hahmot {
      */
     public void korvaaTaiLisaa(Hahmo hahmo) throws SailoException {
         int id = hahmo.getHid();
-        for (int i = 0; i < lkm; i++) {
-            if (hahmot[i].getHid() == id) {
+        for (int i = 0; i < hahmot.length; i++) {
+            if (hahmot[i] != null && hahmot[i].getHid() == id) {
                 hahmot[i] = hahmo;
                 muutettu = true;
                 return;
             }
         }
         lisaaHahmo(hahmo);
+        muutettu = true;
+    }
+    
+    /**
+     * Poistaa halutun hahmon id-numeroa vastaan
+     * @param hid hahmon id joka poistetaan
+     * @return 1 jos onnistui, 0 jos ei
+     */
+    public int poista(int hid) {
+        for (int i = 0; i < hahmot.length; i++) {
+            if (hahmot[i] != null && hahmot[i].getHid() == hid) {
+                hahmot[i] = null;
+                lkm--;
+                muutettu = true;
+                return 1;
+            }
+        }
+        return 0;
+    }
+    
+    /**
+     * Etsii hahmot joiden nimi sopeutuu hakuehtoon
+     * @param hakuehto Jonka mukaan etsitään
+     * @return listan hahmoista
+     */
+    public List<Hahmo> etsi(String hakuehto) {
+        String ehto = "*";
+        if (hakuehto != null && hakuehto.length() > 0) ehto = '*' +  hakuehto + '*';
+        List<Hahmo> vastaus = new ArrayList<Hahmo>();
+        for (Hahmo hahmo : hahmot) {
+            if (hahmo != null && WildChars.onkoSamat(hahmo.getNimi(), ehto)) vastaus.add(hahmo);
+        }
+        return vastaus;
     }
     
     /**
@@ -247,13 +301,11 @@ public class Hahmot {
                 }
             }
         } catch (FileNotFoundException e) {
-            throw new SailoException("Ei saa luettua tiedostoa " + tiedostonNimi);
+            throw new SailoException("Tällä profiilinimellä ei ole aikaisempia tiedostoja, tai ne ovat tuhoutuneet. Ne luodaan kun tallennat tässä sessiossa.");
             
         } /*
            * catch (IOException e) { throw new
            * SailoException("Ongelmia tiedoston kanssa: " + e.getMessage()); }
            */
     }
-   
-
 }

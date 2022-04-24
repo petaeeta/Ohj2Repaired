@@ -9,6 +9,7 @@ import fi.jyu.mit.ohj2.Mjonot;
  * @author petteri
  * @version 29.3.2019
  * @version 22.4.2022
+ * @Version 24.4.2022
  *
  */
 public class Build {
@@ -118,11 +119,10 @@ public class Build {
         String tjono = s.trim();
         switch(k) {
         case 0:
-            if (tjono == "") return "Buildin nimi ei saa olla tyhjä";
             nimi = tjono;
+            if (tjono == "") return "Buildin nimi ei saa olla tyhjä";
             return null;
         case 1:
-            if (tjono == "") return "Buildin kuvaus ei saa olla tyhjä";
             kuvaus = tjono;
             return null;
         default:

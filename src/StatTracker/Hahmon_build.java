@@ -6,6 +6,7 @@ import fi.jyu.mit.ohj2.Mjonot;
  * Luokka, johon tallennetaan alkioita merkkaamaan, mit‰ buildeja mik‰kin hahmo k‰ytt‰‰
  * @author petteri
  * @version 29.3.2019
+ * @Version 24.4.2022
  *
  */
 public class Hahmon_build {

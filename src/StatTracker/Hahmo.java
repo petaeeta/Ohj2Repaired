@@ -1,6 +1,7 @@
 package StatTracker;
 
 import java.io.PrintStream;
+import java.math.BigInteger;
 import java.util.Random;
 
 import fi.jyu.mit.ohj2.Mjonot;
@@ -9,6 +10,7 @@ import fi.jyu.mit.ohj2.Mjonot;
  * 
  * @author petteri
  * @version 29.3.2019
+ * @Version 24.4.2022
  *
  */
 public class Hahmo{
@@ -28,30 +30,30 @@ public class Hahmo{
     public String getKysymys(int k) {
         switch(k) {
         case 0:
-            return "Hahmo-id:";
+            return "Hahmo-id";
         case 1:
-            return "Nimi:" ;
+            return "Nimi" ;
         case 2:
-            return "Tapot:";
+            return "Tapot";
         case 3:
-            return "Kuolemat:";
+            return "Kuolemat";
         case 4:
-            return "Voitot:";
+            return "Voitot";
         case 5:
-            return "Häviöt:";
+            return "Häviöt";
         case 6:
-            return "K/D-ratio:";
+            return "K/D-ratio";
         case 7:
-            return "W/L-ratio:";
+            return "W/L-ratio";
         default:
             return "";
         }
     }
     
     /**
-     * Arvoja perustuen lukuun
-     * @param k luku jota vastaan label annetaan
-     * @return oikea label
+     * Arvoja perustuen indeksiin
+     * @param k indeksi jota vastaan arvo annetaan
+     * @return oikea arvo oikealle kentälle
      */
     public String anna(int k) {
         switch(k) {
@@ -77,35 +79,58 @@ public class Hahmo{
     }
     
     /**
+     * Antaa numeraalisia arvoja parametreista indeksiä vastaan
+     * @param k indeksi jota vastaan arvo annetaan
+     * @return oikea label
+     */
+    public int annaNumeraaliset(int k) {
+        switch(k) {
+        case 0:
+            return hid;
+        case 1:
+            return nimi.length();
+        case 2:
+            return tapot;
+        case 3:
+            return kuolemat;
+        case 4:
+            return voitot;
+        case 5:
+            return haviot;
+        default:
+            return -1;
+        }
+    }
+    
+    /**
      * @param k luku jota vastaan asetetaan oikea arvo
      * @param jono merkkijono joka olisi uusi arvo
      * @return Virheilmoitus, null jos kaikki ok
      */
     public String aseta(int k, String jono) {
         try {
-        if (jono == "") return null;
         String tjono = jono.replaceAll("\\s+", "");
         switch(k) {
         case 1:
             nimi = jono.trim();
             return null;
         case 2:
-            int arvo = Integer.parseInt(tjono);
+            int arvo = new BigInteger(tjono).intValueExact();
             if (arvo < 0) return "Arvo ei saa olla negatiivinen";
             tapot = arvo;
             return null;
         case 3:
-            arvo = Integer.parseInt(tjono);
+            arvo = new BigInteger(tjono).intValueExact();
             if (arvo < 0) return "Arvo ei saa olla negatiivinen";
             kuolemat = arvo;
             return null;
         case 4:
-            arvo = Integer.parseInt(tjono);
+            arvo = new BigInteger(tjono).intValueExact();
             if (arvo < 0) return "Arvo ei saa olla negatiivinen";
             voitot = arvo;
             return null;
         case 5:
-            arvo = Integer.parseInt(tjono);
+            arvo = new BigInteger(tjono).intValueExact();
             if (arvo < 0) return "Arvo ei saa olla negatiivinen";
             haviot = arvo;
             return null;
@@ -113,6 +138,8 @@ public class Hahmo{
             return null;
         }} catch(NumberFormatException e) {
             return "Annettua arvoa ei tunnisteta luvuksi";
+        } catch(ArithmeticException e) {
+            return "Annettu arvo ei ole sallitulla arvoalueella";
         }
     }  
     
@@ -312,7 +339,7 @@ public class Hahmo{
      * @param ps tietovirta johon tulostetaan
      */
     public void tulosta(PrintStream ps) {
-        ps.println(hid + "\n" + nimi + "\n" + tapot + "\n" + kuolemat + "\n" + voitot + "\n" + haviot + "\n");
+        ps.println(hid + "\nNimi: " + nimi + "\nTapot: " + tapot + "\nKuolemat: " + kuolemat + "\nVoitot: " + voitot + "\nHäviöt: " + haviot + "\n");
     }
     
 
@@ -357,7 +384,6 @@ public class Hahmo{
         return 1;
     }
     
-    
     /**
      * Get-metodi seuraavan luotavan hahmon id-numerolle. Luotu lähinnä Junit-testeille ettei tarvitse pitää seuraava_hid attribuuttia public näkyvyydellä.
      * @return Seuraavan luotavan hahmon id(Hid).
@@ -392,7 +418,6 @@ public class Hahmo{
         haviot = Mjonot.erota(sb, '|', haviot);
         tapot = Mjonot.erota(sb, '|', tapot);
         kuolemat = Mjonot.erota(sb, '|', kuolemat);
-        
     }
     
     

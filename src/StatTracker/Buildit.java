@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,10 +13,11 @@ import java.util.Scanner;
  * 
  * @author petteri
  * @version 29.3.2019
+ * @Version 24.4.2022
  *
  */
 public class Buildit {
-   private Build[] taulukko = new Build[10];
+   private Build[] buildit = new Build[10];
    private int maxlkm = 10; //k‰ytet‰‰n vasta kun tietorakennetta kasvatetaan rajatta
    private int lkm;
    private String profiiliNimi = "profiili";
@@ -54,16 +56,24 @@ public class Buildit {
     */
    public void lisaaBuild(Build build) {
        if (build.getBid() < 0) build.rekisteroi();
-       if (lkm >= taulukko.length) {
+       if (lkm >= buildit.length) {
            maxlkm += 20;
            Build[] uusi = new Build[maxlkm];
-           for(int i = 0; i < taulukko.length; i++) {
-               uusi[i] = taulukko[i];
+           for(int i = 0; i < buildit.length; i++) {
+               uusi[i] = buildit[i];
            }
-           taulukko = uusi;
+           buildit = uusi;
+           muutettu = true;
        }
-       taulukko[lkm] = build;
-       lkm++;
+       for (int i = 0; i < buildit.length; i++) {
+           if (buildit[i] == null) {
+               buildit[i] = build;
+               lkm++;
+               muutettu = true;
+               return;
+               
+           }
+       }
    }
    
    /**
@@ -74,7 +84,7 @@ public class Buildit {
     */
    public Build anna(int i) throws IndexOutOfBoundsException{
        if (i < 0 || lkm <= i) throw new IndexOutOfBoundsException("Laiton indeksi: " + i);
-       return taulukko[i];
+       return buildit[i];
    }
    
    /**
@@ -85,12 +95,25 @@ public class Buildit {
     */
       public Build annaBuild(int i) throws SailoException{
           Build vastaus = null;
-          for(Build b : taulukko) {
+          for(Build b : buildit) {
               if (b == null) continue;
               if (b.getBid() == i) vastaus = b;
           }
           // Mik‰li on oikein koodattu j‰rjestelm‰, n‰in ei pit‰isi edes tapahtua. Printataan error jokatapauksessa.
           if (vastaus == null) throw new SailoException("Etsitt‰v‰‰ buildia id:ll‰ " + i + " ei lˆytynyt");
+          return vastaus;
+      }
+      
+      
+     /**
+     * palauttaa kaikki buildit
+     * @return kaikki buildit
+     */
+      public List<Build> annaBuildit() {
+          List <Build> vastaus = new ArrayList<Build>();
+          for(Build build : buildit) {
+              if (build != null) vastaus.add(build);
+          }
           return vastaus;
       }
    
@@ -102,7 +125,7 @@ public class Buildit {
  */
    public String annaBuildNimi(int i){
        String vastaus = "";
-       for(Build b : taulukko) {
+       for(Build b : buildit) {
            if (b == null) continue;
            if (b.getBid() == i) vastaus = b.getNimi();
        }
@@ -154,7 +177,7 @@ public class Buildit {
                }
            }
        } catch (FileNotFoundException e) {
-           throw new SailoException("Ei saa luettua tiedostoa " + tiedostonNimi);
+           throw new SailoException("T‰ll‰ profiilinimell‰ ei ole aikaisempia tiedostoja, tai ne ovat tuhoutuneet. Ne luodaan kun tallennat t‰ss‰ sessiossa.");
            
        }
        /*
@@ -170,9 +193,9 @@ public class Buildit {
     */
    public void korvaaTaiLisaa(Build build) {
        int id = build.getBid();
-       for (int i = 0; i < lkm; i++) {
-           if (taulukko[i].getBid() == id) {
-               taulukko[i] = build;
+       for (int i = 0; i < buildit.length; i++) {
+           if (buildit[i].getBid() == id) {
+               buildit[i] = build;
                muutettu = true;
                return;
            }
@@ -180,6 +203,23 @@ public class Buildit {
        lisaaBuild(build);
        muutettu = true;
        
+   }
+   
+   /**
+    * Poistaa halutun buildin id-numeroa vastaan
+    * @param bid buildin id joka poistetaan
+    * @return 1 jos onnistui, 0 jos ei
+    */
+   public int poista(int bid) {
+       for (int i = 0; i < buildit.length; i++) {
+           if (buildit[i] != null && buildit[i].getBid() == bid) {
+               buildit[i] = null;
+               lkm--;
+               muutettu = true;
+               return 1;
+           }
+       }
+       return 0;
    }
    
    /**
@@ -199,14 +239,14 @@ public class Buildit {
        File tied = new File(tiednimi + "/" + tiedostoNimi + ".dat");
        try {
            try (PrintStream fo = new PrintStream(new FileOutputStream(tied, false))) {
-               for (int i = 0; i < getLkm(); i++) {
-                   Build build = anna(i);
-                   fo.println(build);
+               for (int i = 0; i < buildit.length; i++) {
+                   if (buildit[i] != null)fo.println(buildit[i]);
                }
            }
        } catch(Exception e) {
            throw new SailoException("Tiedosto " + tied.getAbsolutePath() + " ei aukea");
        }
+       muutettu = false;
    }
    
    /**
@@ -216,6 +256,15 @@ public class Buildit {
    public int getLkm() {
        return lkm;
    }
+   
+   
+   /**
+    * Palauttaa arvon perustuen siihen onko tallennuskriittisi‰ tiedostoja muutettu 
+    * @return muutettu-arvon
+   */
+   public boolean getMuutettu() {
+       return muutettu;
+   }
 
    /**
     * tulostaa listan id:t‰ vastaavat buildit, tehty vaihetta 5 varten
@@ -224,13 +273,12 @@ public class Buildit {
     */
    public void tulostaBuildit(List<Integer> halutut, PrintStream os) {
        for (int i = 0; i < lkm; i++) {
-           Build osoitin = taulukko[i];
+           Build osoitin = buildit[i];
            for (Integer x : halutut) {
                if (x == osoitin.getBid()) osoitin.tulosta(os);
            }
        }
     
     
-}
-    
+}   
 }

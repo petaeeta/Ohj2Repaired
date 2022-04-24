@@ -13,6 +13,7 @@ import javafx.stage.Stage;
  * @author petteri
  * @version 15.2.2019
  * @version 21.4.2022
+ * @Version 24.4.2022
  *
  */
 public class BuildLuontiController implements ModalControllerInterface<Build> {
@@ -23,6 +24,10 @@ public class BuildLuontiController implements ModalControllerInterface<Build> {
     
     
     @FXML void handleBuildTallenna() {
+        if ( buildKohdalla != null && buildKohdalla.getNimi().trim().equals("")) {
+            Dialogs.showMessageDialog("Build tarvitsee v‰hint‰‰n nimen.");
+            return;
+        }
         ModalController.closeStage(tallenna);
     }
 
@@ -33,12 +38,13 @@ public class BuildLuontiController implements ModalControllerInterface<Build> {
 
     @Override
     public Build getResult() {
+        if ( buildKohdalla != null && buildKohdalla.getNimi().trim().equals("")) buildKohdalla = null;
         return buildKohdalla;
     }
 
     @Override
     public void handleShown() {
-        // TODO Auto-generated method stub
+        buildNimiField.requestFocus();
         
     }
 
@@ -49,7 +55,6 @@ public class BuildLuontiController implements ModalControllerInterface<Build> {
     }
     
     //==========================================================================
-    private static Build apubuild = new Build(false);
     private Build buildKohdalla;
     
     /**
@@ -68,7 +73,6 @@ public class BuildLuontiController implements ModalControllerInterface<Build> {
      * @param k arvo joka kent‰lle halutaan
      */
     protected void kasitteleMuutosBuildiin(TextField edit, int k) {
-        if (buildKohdalla == null) return;
             String s = edit.getText();
             String virhe = null; 
             virhe = buildKohdalla.aseta(k, s);

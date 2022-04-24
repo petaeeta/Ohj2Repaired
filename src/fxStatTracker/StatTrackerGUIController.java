@@ -1,6 +1,13 @@
 package fxStatTracker;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -20,6 +27,7 @@ import javafx.scene.layout.GridPane;
  * @author petteri
  * @version 14.2.2019
  * @version 22.4.2022
+ * @version 1.0 24.4.2022
  *
  */
 public class StatTrackerGUIController implements Initializable {
@@ -43,6 +51,8 @@ public class StatTrackerGUIController implements Initializable {
     @FXML private TextField overallWl;
     @FXML private TextField overallKd;
     @FXML private GridPane gridHahmo;
+    @FXML private ComboBoxChooser<Object> cbKentat;
+    @FXML private TextField hakuEhto;
     
     /**
      * Uuden hahmon k‰sittely
@@ -55,9 +65,9 @@ public class StatTrackerGUIController implements Initializable {
      * Poistaa valitun hahmon
      */
     @FXML private void handlePoistaHahmo() {
-        Dialogs.showMessageDialog("Ei osata poistaa");
+        poistaHahmo();
        }
-    
+
     /**
      * Hahmon muokkausikkuna
      */
@@ -69,20 +79,15 @@ public class StatTrackerGUIController implements Initializable {
      * Buildien hallinta
      */
     @FXML private void handleBuild() {
-        //uusiBuild();
         uusiTemplateBuild();
        }
     
+    /*
+     * Buildin lis‰‰minen hahmolle
+     */
     @FXML private void assignBuild() {
         annaHahmolleBuild();
     }
-
-    /**
-     * Nollaa profiilin tiedot, mutta s‰‰st‰‰ hahmot sek‰ buildit, jotka pit‰‰ itse k‰yd‰ poistamassa.
-     */
-    @FXML private void handleTietojenNollaus() {
-        Dialogs.showMessageDialog("Ei osata nollata");
-       }
     
     /**
      * Avaa ikkunan, jossa on version nimi, sek‰ tekij‰. T‰m‰n muoto todenn‰kˆisesti viel‰ muuttuu, mutta teoriassa sen voi t‰ll‰ dialogillakin tehd‰
@@ -92,32 +97,20 @@ public class StatTrackerGUIController implements Initializable {
        }
     
     /**
-     * Avaa ohjeet siit‰, miten hahmoja luodaan, ja muutenkin k‰sitell‰‰n
-     */
-    @FXML private void handleHahmojaOhjeet() {
-        Dialogs.showMessageDialog("Ei osata kertoa");
-    }
-    
-    /**
-     * Avaa ohjeet siit‰, miten buildeja avataan, poistetaan, muokataan ja muutenkin k‰ytet‰‰n
-     */
-    @FXML private void handleBuildOhjeet() {
-        Dialogs.showMessageDialog("Ei osata kertoa");
-    }
-    
-    /**
      * Avaa lyhyen selityksen siit‰, mik‰ StatTracker on, sek‰ kertoo lyhyesti sen k‰ytˆst‰
      */
     @FXML private void handleStatTrackerOhjeet() {
-        Dialogs.showMessageDialog("Ei osata kertoa");
+        avaaApu();
     }
     
-    /**
-     * Etsii hahmon hakuehdon mukaan
+    /*
+     * Vaihtaa uuteen profiiliin
      */
-    @FXML private void handleEtsi() {
-        Dialogs.showMessageDialog("Ei osata viel‰ etsi‰");
-       }
+    @FXML private void handleVaihda() {
+        if (voikoSulkea()) {
+            avaa();
+        }
+    }
     
     /**
      * Avaa uuden profiilin
@@ -130,24 +123,50 @@ public class StatTrackerGUIController implements Initializable {
      * Poistuu ohjelmasta
      */
     @FXML private void handlePoistu() {
-        Platform.exit();
+        if (voikoSulkea()) {
+            Platform.exit();
+        }
     }
     
     /**
      * Poistaa buildin
      */
     @FXML private void handlePoistaBuild() {
-        Dialogs.showMessageDialog("Ei osata poistaa");
+        poistaBuild();
     }
-    
+
     @FXML void handleBuildMuokkaus() {
         avaaBuildinMuokkaus();
     }
     
+    /**
+     * Poistaa spesifin hahmobuildin
+     */
     @FXML void handlePoistaHahmonBuild() {
-        Dialogs.showMessageDialog("Ei osata poistaa");
+        poistaHahmonBuild();
+    }
+
+    /*
+     * Hakee halutun ehdon mukaan
+     */
+    @FXML void handleHakuEhto() {
+        haeHahmot(0);
     }
     
+    /*
+     * Tiedon tallennus
+     */
+    @FXML void handleTallenna() {
+        tallenna();
+    }
+    
+    /**
+     * Tulostaa hahmon tiedot
+     */
+    @FXML private void handleTulosta() {
+        TulostusController tulostusCtrl = TulostusController.tulosta(null);
+        tulostaValitutHahmot(tulostusCtrl.getTextArea());
+    }
 
     /**
      * Metodi jota kysyt‰‰n sulkemisen yhteydess‰ varmistaakseen,
@@ -157,6 +176,11 @@ public class StatTrackerGUIController implements Initializable {
      * @return boolean arvon, johon perustuen ohjelma joko suljetaan tai ei suljeta.
      */
     public boolean voikoSulkea() {
+        if (profiili.askMuutettu()) {
+            if (Dialogs.showQuestionDialog("Tallennetaanko?", "Sinulla on tallentamattomia muutoksia, tallennetaanko ennen sulkemista?", "Kyll‰", "Ei")); {
+                tallenna();
+            }
+        }
         return true;
     }
 
@@ -166,15 +190,14 @@ public class StatTrackerGUIController implements Initializable {
     
 //===============================================================================================================
     private Profiili profiili;
-    //private TextArea areaHahmo = new TextArea();
-    //private TextArea areaBuild = new TextArea();
+    private String profiiliNimi;
     private Hahmo hahmoKohdalla;
     private Build buildKohdalla;
+    private Build hahmobuildKohdalla;
     private static Hahmo apuhahmo = new Hahmo(false);
     private TextField edits[];
     private ListChooser<Build> chooserHahmoBuildit;
-    private TextArea hahmobuildit;
-    private int hid;
+    
 
     @Override
     public void initialize(URL url, ResourceBundle bundle) {
@@ -182,12 +205,15 @@ public class StatTrackerGUIController implements Initializable {
     }
 
     private void alusta() {
-        //panelHahmo.setContent(areaHahmo);
-        //panelBuild.setContent(areaBuild);
-        //areaHahmo.setFont(new Font("Courier New", 12));
-        //areaBuild.setFont(new Font("Courier New", 12));
         panelHahmo.setFitToHeight(true);
         panelBuild.setFitToHeight(true);
+        
+        cbKentat.clear();
+        for (int k = apuhahmo.ekaKentta(); k < apuhahmo.getKenttia(); k++) {
+            cbKentat.add(apuhahmo.getKysymys(k));
+        }
+        cbKentat.getSelectionModel().select(0);
+        cbKentat.addSelectionListener(e -> haeHahmot());
         
         edits = HahmonMuokkausController.luoKentat(gridHahmo, apuhahmo.getKenttia(), false);
         
@@ -206,8 +232,34 @@ public class StatTrackerGUIController implements Initializable {
         
         chooserHahmoBuildit.clear();
         chooserHahmoBuildit.setPrefHeight(160);
-        //chooserHahmoBuildit.addSelectionListener(e -> naytaHahmoBuild());
     }
+    
+    /**
+     * Avataan harkkatyˆn suunnitelma
+     */
+    private void avaaApu() {
+        Desktop desktop = Desktop.getDesktop();
+        try {
+            URI uri = new URI("https://tim.jyu.fi/view/kurssit/tie/ohj2/2019k/ht/petaeeta#mtypuo4cyMgg");
+            desktop.browse(uri);
+        } catch (URISyntaxException e) {
+            return;
+        } catch (IOException e) {
+            return;
+        }
+    }
+    
+    /*
+     * Tallentaa tiedot levylle
+     */
+    private void tallenna() {
+        try {
+            profiili.tallenna();
+        } catch (SailoException e) {
+            Dialogs.showMessageDialog(e.getMessage());
+        }
+    }
+    
      
     /*
      * Laittaa hahmon tiedot kenttiin
@@ -226,6 +278,62 @@ public class StatTrackerGUIController implements Initializable {
             } catch (SailoException e) {
                 Dialogs.showMessageDialog(e.getMessage());
             }
+        }
+    }
+    
+    /*
+     * Poistaa hahmolta h‰nelle assignatun buildin
+     */
+    private void poistaHahmonBuild() {
+        hahmobuildKohdalla = chooserHahmoBuildit.getSelectedObject();
+        hahmoKohdalla = chooserHahmot.getSelectedObject();
+        if (hahmobuildKohdalla == null) {
+            Dialogs.showMessageDialog("Ei hahmon buildia valittu");
+            return;
+        }
+        else if (hahmoKohdalla == null) {
+            Dialogs.showMessageDialog("Ei hahmoa valittu");
+            return;
+        }
+        profiili.poistaHahmonBuild(hahmoKohdalla, hahmobuildKohdalla);
+        laitaHahmo();
+    }
+    
+    /*
+     * Poistaa hahmon kokonaan
+     */
+    private void poistaHahmo() {
+        hahmoKohdalla = chooserHahmot.getSelectedObject();
+        if (hahmoKohdalla == null) return;
+        if (!Dialogs.showQuestionDialog("Poisto", "Poistetaanko hahmo: " + hahmoKohdalla.getNimi() + "?", "Kyll‰", "Ei")) return;
+        int vastaus = profiili.poistaHahmo(hahmoKohdalla);
+        if (vastaus == 0) Dialogs.showMessageDialog("Poisto ep‰onnistui.");
+        chooserHahmot.getSelectionModel().clearAndSelect(0);
+        clearHahmoFields();
+        haeHahmot(0);
+        laitaHahmo();
+        updateOverall();
+    }
+    
+    /*
+     * Poistaa buildin kokonaan
+     */
+    private void poistaBuild() {
+        buildKohdalla = chooserBuildit.getSelectedObject();
+        if(buildKohdalla == null) return;
+        if (!Dialogs.showQuestionDialog("Poisto", "Poistetaanko build: " + buildKohdalla.getNimi() + "?", "Kyll‰", "Ei")) return;
+        int vastaus = profiili.poistaBuild(buildKohdalla);
+        if (vastaus == 0) Dialogs.showMessageDialog("Poisto ep‰onnistui.");
+        haeBuildit(0);
+        laitaHahmo();
+    }
+    
+    /*
+     * Tyhjent‰‰ hahmon tekstikent‰t
+     */
+    private void clearHahmoFields() {
+        for (TextField edit : edits) {
+            if (edit != null) edit.clear();
         }
     }
     
@@ -301,7 +409,7 @@ public class StatTrackerGUIController implements Initializable {
     }
     
     /**
-     * Luo uuden buildin, mutte
+     * Luo uuden buildin rekisterˆim‰tt‰ sit‰
      */
     private void uusiTemplateBuild() {
         try {
@@ -318,29 +426,11 @@ public class StatTrackerGUIController implements Initializable {
     }
     
     /**
-     * Luo uuden buildin
-     */
-    
-      public void uusiBuild() { 
-          try { 
-              Build build = new Build();
-              profiili.LisaaBuild(build);
-              
-      
-              haeHahmot(hahmoKohdalla.getHid());
-              } catch (SailoException e) {
-                  Dialogs.showMessageDialog(e.getMessage()); } }
-     
-    
-    
-    /**
-     * 
-     * @param profiili jota k‰sitell‰‰n
+     * Asettaa profiilin
+     * @param profiili joka valittiin
      */
     public void setProfiili(Profiili profiili) {
         this.profiili = profiili;
-        updateOverall();
-        naytaHahmo();
     }
     
     /*
@@ -421,21 +511,55 @@ public class StatTrackerGUIController implements Initializable {
         
     }
     
+    private void haeHahmot() {
+        if (chooserHahmot.getSelectedObject() != null)haeHahmot(chooserHahmot.getSelectedObject().getHid());
+    }
+    
     /**
      * Hakee hahmojen tiedot listaan
      * @param tunnusNro hahmon numero, joka aktivoidaan haun j‰lkeen
      */
     private void haeHahmot(int tunnusNro) {
+        String hakuehto = "";
+        if (hakuEhto.getText().trim() != "") hakuehto = hakuEhto.getText().trim();
         chooserHahmot.clear();
         
+        int sortEhto = cbKentat.getSelectionModel().getSelectedIndex() + apuhahmo.ekaKentta();
+        
         int index = 0;
-        for (int i = 0; i < profiili.getHahmoMaara(); i++) {
-            Hahmo hahmo = profiili.annaHahmo(i);
+        List<Hahmo> vastaus = profiili.etsi(hakuehto);
+        
+        /*
+         * Sorttaa hakujen perusteella listan. Ilman rajapintoja pit‰‰ tehd‰ n‰in,
+         * sill‰ haluan sortata hahmoa kolmen eri muuttujatyypin perusteella, String jos nimi, int jos perus-statistiikka.
+         * K/D sek‰ W/L myˆs ilmoitetaan kaikkialla double-muodossa, joten ne j‰rjestet‰‰n ihan tavallisella v‰hennyslaskulla
+         */
+        Collections.sort(vastaus, new Comparator<Hahmo>() {
+            @Override
+            public int compare(Hahmo x, Hahmo y) {
+                switch(sortEhto) {
+                    case 1:
+                        return x.anna(1).compareTo(y.anna(1));
+                    case 6:
+                        if (intSuhde(x.getTapot(), x.getKuolemat()) < intSuhde(y.getTapot(), y.getKuolemat())) return 1;
+                        return -1;
+                    case 7:
+                        if (intSuhde(x.getVoitot(), x.getHaviot()) < intSuhde(y.getVoitot(), y.getHaviot())) return 1;
+                        return -1;
+                    default:
+                        return y.annaNumeraaliset(sortEhto) - x.annaNumeraaliset(sortEhto);
+                }
+            }
+        });
+        
+        int i = 0;
+        for (Hahmo hahmo : vastaus) {
             if (hahmo.getHid() == tunnusNro) index = i;
             chooserHahmot.add(hahmo.getNimi(), hahmo);
+            i++;
         }
         chooserHahmot.getSelectionModel().clearAndSelect(index);
-        
+        laitaHahmo();
     }
     
     /**
@@ -444,26 +568,68 @@ public class StatTrackerGUIController implements Initializable {
      */
     protected void haeBuildit(int tunnusNro) {
         chooserBuildit.clear();
-        
+        List<Build> vastaus = profiili.annaBuildit();
         int index = 0;
-        for (int i = 0; i < profiili.getBuildMaara(); i++) {
-            Build build = profiili.annaBuild(i);
-            if (build.getBid() == tunnusNro) index = i;
+        int i = 0;
+        for (Build build : vastaus) {
+            if(build.getBid() == tunnusNro) index = i;
             chooserBuildit.add(build.getNimi(), build);
+            i++;
         }
         chooserBuildit.getSelectionModel().clearAndSelect(index);
     }
-
+    
+    /**
+     * Alustaa kerhon lukemalla tiedostonimen joka on jo asetettu
+     */
+    protected void lueTiedosto() {
+        try {
+            profiili.lueTiedostosta(profiiliNimi);
+        } catch(SailoException e) {
+            Dialogs.showMessageDialog(e.getMessage());
+        }
+        haeHahmot(0);
+        haeBuildit(0);
+        updateOverall();
+        
+    }
+    
+    
+    /**
+     * Tulostaa hahmon tiedot
+     * @param os Tietovirta johon tulostetaan
+     * @param hahmo joka tulostetaan
+     */
+    public void tulosta(PrintStream os, final Hahmo hahmo) {
+        os.println("----------------------------------------------");
+        hahmo.tulosta(os);
+        os.println("----------------------------------------------");
+    }
+    
+    
+    /**
+     * Tulostaa hahmon tiedot annettuun striimiin
+     * @param text joka tulostetaan
+     */
+    public void tulostaValitutHahmot(TextArea text) {
+        try (PrintStream os = TextAreaOutputStream.getTextPrintStream(text)){
+            os.println("Tulostetaan hahmot");
+            for (Hahmo hahmo : chooserHahmot.getObjects()) {
+                tulosta(os, hahmo);
+                os.println("\n\n");
+            }
+        }
+    }
+    
+    
     /**
      * Metodi joka varmistaa ett‰ profiili avataan
      * @return False jos k‰ytt‰j‰ peruu profiilin avaamisen
      */
-    public static boolean avaa() {
-        String profiiliNimi = AvaaController.kysyProfiili(null, "exampleProfile");
+    public boolean avaa() {
+        profiiliNimi = AvaaController.kysyProfiili(null, "EsimerkkiProfiili");
         if (profiiliNimi == null) return false;
-        // lueTiedosto(profiiliNimi);
+        lueTiedosto();
         return true;
     }
-    
-    
 }

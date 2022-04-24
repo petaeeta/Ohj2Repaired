@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import fi.jyu.mit.fxgui.ComboBoxChooser?>
 <?import fi.jyu.mit.fxgui.ListChooser?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -25,8 +26,13 @@
         <menus>
             <Menu mnemonicParsing="false" text="Tiedosto">
                <items>
-                  <MenuItem fx:id="avaaMenu" mnemonicParsing="false" onAction="#handleAvaa" text="Vaihda profiilia..." />
-                  <MenuItem fx:id="tietojennollausMenu" mnemonicParsing="false" onAction="#handleTietojenNollaus" text="Nollaa tiedot..." />
+                  <MenuItem fx:id="avaaMenu" mnemonicParsing="false" onAction="#handleVaihda" text="Vaihda profiilia..." />
+                  <MenuItem mnemonicParsing="false" onAction="#handleTallenna" text="Tallenna">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#handleTulosta" text="Tulosta" />
                   <MenuItem fx:id="poistuMenu" mnemonicParsing="false" onAction="#handlePoistu" text="Poistu">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
@@ -49,17 +55,14 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="D" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
-                  <MenuItem fx:id="buildhallintaMenu" mnemonicParsing="false" onAction="#handleBuild" text="Hallitse buildeja...">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="B" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator></MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#handleBuild" text="Uusi build..." />
+                  <MenuItem mnemonicParsing="false" onAction="#handleBuildMuokkaus" text="Muokkaa buildia..." />
+                  <MenuItem mnemonicParsing="false" onAction="#handlePoistaBuild" text="Poista build..." />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Apua">
             <items>
-                  <MenuItem fx:id="StatTrackerMenu" mnemonicParsing="false" onAction="#handleStatTrackerOhjeet" text="StatTracker lyhyesti" />
-              <MenuItem fx:id="HahmoOhjeetMenu" mnemonicParsing="false" onAction="#handleHahmojaOhjeet" text="Kuinka lisään hahmoja" />
-                  <MenuItem fx:id="BuildOhjeetMenu" mnemonicParsing="false" onAction="#handleBuildOhjeet" text="Kuinka lisään/käytän buildeja" />
+                  <MenuItem fx:id="StatTrackerMenu" mnemonicParsing="false" onAction="#handleStatTrackerOhjeet" text="StatTracker-apusivu" />
                   <MenuItem fx:id="tietojaMenu" mnemonicParsing="false" onAction="#handleTietoja" text="Tietoja">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="I" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
@@ -80,7 +83,12 @@
                   <ListChooser fx:id="chooserHahmot" maxWidth="500.0" prefHeight="200.0" prefWidth="230.0" rivit="Widowmaker&#10;Ashe&#10;Roadhog&#10;Bastion&#10;" />
                </center>
                <top>
-                  <TextField fx:id="hakuehto" onAction="#handleEtsi" promptText="Etsi..." BorderPane.alignment="CENTER" />
+                  <VBox BorderPane.alignment="CENTER">
+                     <children>
+                        <ComboBoxChooser fx:id="cbKentat" minWidth="240.0" />
+                        <TextField fx:id="hakuEhto" onKeyReleased="#handleHakuEhto" promptText="Etsi..." />
+                     </children>
+                  </VBox>
                </top>
             </BorderPane>
          </center>
@@ -112,7 +120,7 @@
                <center>
                   <ScrollPane fx:id="panelHahmo" fitToWidth="true" pannable="true" BorderPane.alignment="CENTER">
                      <content>
-                        <GridPane fx:id="gridHahmo" alignment="CENTER" gridLinesVisible="true">
+                        <GridPane fx:id="gridHahmo" alignment="CENTER">
                           <columnConstraints>
                             <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" />
                             <ColumnConstraints hgrow="SOMETIMES" />
@@ -153,31 +161,43 @@
                               <Label text="Nimi:" wrapText="true" />
                            </children>
                            <padding>
-                              <Insets left="10.0" right="10.0" top="10.0" />
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </padding>
                         </GridPane>
                      </content>
                   </ScrollPane>
                </center>
                <bottom>
-                  <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                  <VBox alignment="CENTER" BorderPane.alignment="CENTER">
                      <children>
-                        <Button fx:id="muokkaahahmo" mnemonicParsing="false" onMouseClicked="#handleHahmonTilastoja" text="Muokkaa hahmon tilastoja">
-                           <HBox.margin>
-                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                           </HBox.margin>
+                        <HBox alignment="CENTER">
+                           <children>
+                              <Button fx:id="muokkaahahmo" mnemonicParsing="false" onMouseClicked="#handleHahmonTilastoja" text="Muokkaa hahmon tilastoja" wrapText="true">
+                                 <HBox.margin>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </HBox.margin>
+                              </Button>
+                              <Button fx:id="buildhallinta" mnemonicParsing="false" onMouseClicked="#assignBuild" text="Anna valittu build valitulle hahmolle" wrapText="true">
+                                 <HBox.margin>
+                                    <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                 </HBox.margin>
+                              </Button>
+                              <Button mnemonicParsing="false" onMouseClicked="#handlePoistaHahmonBuild" text="Poista hahmon build" wrapText="true" />
+                           </children>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </HBox>
+                        <Button mnemonicParsing="false" onMouseClicked="#handleTallenna" text="Tallenna muutokset" wrapText="true">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets bottom="6.0" left="2.0" right="2.0" top="6.0" />
+                           </VBox.margin>
                         </Button>
-                        <Button fx:id="buildhallinta" mnemonicParsing="false" onMouseClicked="#assignBuild" text="Anna valittu build valitulle hahmolle">
-                           <HBox.margin>
-                              <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-                           </HBox.margin>
-                        </Button>
-                        <Button mnemonicParsing="false" onMouseClicked="#handlePoistaHahmonBuild" text="Poista hahmon build" />
                      </children>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                  </HBox>
+                  </VBox>
                </bottom>
             </BorderPane>
          </content>

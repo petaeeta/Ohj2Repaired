@@ -1,8 +1,5 @@
 package fxStatTracker;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import StatTracker.Hahmo;
 import fi.jyu.mit.fxgui.*;
 import fi.jyu.mit.ohj2.Mjonot;
@@ -19,6 +16,7 @@ import javafx.stage.Stage;
  * @author petteri
  * @version 15.2.2019
  * @version 21.4.2022
+ * @version 24.4.2022
  *
  */
 public class HahmonMuokkausController implements ModalControllerInterface<Hahmo> {
@@ -26,11 +24,12 @@ public class HahmonMuokkausController implements ModalControllerInterface<Hahmo>
     @FXML private Button muokkausvalmis;
     @FXML private Button perumuokkaus;
     @FXML private GridPane gridMuokkaus;
+    @FXML private Label labelVirhe;
 
     @FXML void handleHahmonTilastoTallennus() {
         
         if ( hahmoKohdalla != null && hahmoKohdalla.getNimi().trim().equals("")) {
-            Dialogs.showMessageDialog("Nimi ei saa olla tyhj‰");
+            naytaVirhe("Nimi ei saa olla tyhj‰");
             return;
         }
         ModalController.closeStage(muokkausvalmis);
@@ -44,12 +43,14 @@ public class HahmonMuokkausController implements ModalControllerInterface<Hahmo>
     
     @Override
     public Hahmo getResult() {
+        // Uusi check t‰‰ll‰ varmistaa ett‰ ruksia painamalla on sama efekti kuin perumisella
+        if (hahmoKohdalla != null && hahmoKohdalla.getNimi().trim().equals("")) hahmoKohdalla = null;
         return hahmoKohdalla;
     }
 
     @Override
     public void handleShown() {
-        // TODO Auto-generated method stub
+        edits[1].requestFocus();
         
     }
 
@@ -88,13 +89,15 @@ public class HahmonMuokkausController implements ModalControllerInterface<Hahmo>
     String virhe = null; 
     virhe = hahmoKohdalla.aseta(k, s);
     if (virhe == null) {
+        labelVirhe.setText("");
         Dialogs.setToolTipText(edit, "");
         edit.getStyleClass().removeAll("virhe");
         
         }
     else { 
+        labelVirhe.setText(virhe);
         Dialogs.setToolTipText(edit, virhe);
-        edit.getStyleClass().add("Virhe");
+        edit.getStyleClass().add("virhe");
         }
     }
     
@@ -121,7 +124,7 @@ public class HahmonMuokkausController implements ModalControllerInterface<Hahmo>
         gridHahmo.getChildren().clear();
         TextField[] edits = new TextField[kenttia];
         for(int i = 0, k = apuhahmo.ekaKentta(); k < kenttia; k++, i++) {
-            Label label = new Label(apuhahmo.getKysymys(k));
+            Label label = new Label(apuhahmo.getKysymys(k) + ":");
             gridHahmo.add(label, 0, i);
             TextField edit = new TextField();
             edit.setEditable(editable);
@@ -145,6 +148,20 @@ public class HahmonMuokkausController implements ModalControllerInterface<Hahmo>
         }
         
     }
+    
+    /**
+     * N‰ytt‰‰ virheen sellaisen sattuessa
+     * @param virhe joka n‰ytet‰‰n
+     */
+    private void naytaVirhe(String virhe) {
+        if (virhe == null || virhe.isEmpty()) {
+            labelVirhe.setText("");
+            labelVirhe.getStyleClass().removeAll("virhe");
+            return;
+        }
+        labelVirhe.setText(virhe);
+        labelVirhe.getStyleClass().add(virhe);
+    }
 
     /**
      * @param modalityStage mille ollaan modaalisia
@@ -153,13 +170,6 @@ public class HahmonMuokkausController implements ModalControllerInterface<Hahmo>
      */
     public static Hahmo kysyHahmo(Stage modalityStage, Hahmo oletus) {
         return ModalController.showModal(StatTrackerGUIController.class.getResource("HahmonMuokkausGUIView.fxml"), "Hahmon Tiedot", modalityStage, oletus);
-        
-        /*
-         * return ModalController.<Hahmo, HahmonMuokkausController>showModal(
-         * HahmonMuokkausController.class.getResource(
-         * "HahmonMuokkausGUIView,fxml"), "Muokkaus", modalityStage, oletus,
-         * ctrl -> ctrl.setKentta(kentta));
-         */
 
     }
     

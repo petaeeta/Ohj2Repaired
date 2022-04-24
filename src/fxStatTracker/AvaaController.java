@@ -3,7 +3,6 @@ package fxStatTracker;
 import fi.jyu.mit.fxgui.ModalController;
 import fi.jyu.mit.fxgui.ModalControllerInterface;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -14,23 +13,19 @@ import javafx.stage.Stage;
  * @author Petteri
  * @version 14.2.2019
  * @version 21.4.2022
+ * @Version 24.4.2022
  */
 public class AvaaController implements ModalControllerInterface<String> {
 
-    @FXML private TextField textUusiProfiili;
-    @FXML private ComboBox<String> comboboxProfiili;
+    @FXML private TextField textProfiili;
     
-    @FXML private void handleUusiProfiili() {
-        vastaus = textUusiProfiili.getText();
-        ModalController.closeStage(textUusiProfiili);
-    }
-    
-    @FXML private void handleValitseProfiili() {
-        ModalController.closeStage(textUusiProfiili);
+    @FXML private void handleProfiili() {
+        vastaus = textProfiili.getText();
+        ModalController.closeStage(textProfiili);
     }
     
     @FXML private void handlePeruuta() {
-        ModalController.closeStage(textUusiProfiili);
+        ModalController.closeStage(textProfiili);
     }
     
     //================================================================================================================
@@ -43,12 +38,12 @@ public class AvaaController implements ModalControllerInterface<String> {
 
     @Override
     public void handleShown() {
-        textUusiProfiili.requestFocus();
+        textProfiili.requestFocus();
     }
 
     @Override
     public void setDefault(String oletus) {
-        textUusiProfiili.setText(oletus);
+        textProfiili.setText(oletus);
         
     }
     
@@ -59,7 +54,7 @@ public class AvaaController implements ModalControllerInterface<String> {
      * @return null jos käyttäjä painaa cancel, profiilin nimi jos käyttäjä sen syöttää
      */
     public static String kysyProfiili(Stage modalityStage, String oletus) {
-        return ModalController.showModal(AvaaController.class.getResource("AvaaGUIView.fxml"), "Profile 1", modalityStage, oletus);
+        return ModalController.showModal(AvaaController.class.getResource("AvaaGUIView.fxml"), "Profiilin valinta", modalityStage, oletus);
     }
    
 

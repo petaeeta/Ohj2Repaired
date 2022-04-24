@@ -13,6 +13,7 @@ import StatTracker.*;
  * @author petteri
  * @version 14.2.2019
  * @version 21.4.2022
+ * @Version 24.4.2022
  *
  */
 public class StatTrackerMain extends Application {
@@ -35,7 +36,7 @@ public class StatTrackerMain extends Application {
             }));
             
             primaryStage.show();
-            if ( !StatTrackerGUIController.avaa()) Platform.exit();
+            if ( !stattrackerCtrl.avaa()) Platform.exit();
         } catch(Exception e) {
             e.printStackTrace();
         }

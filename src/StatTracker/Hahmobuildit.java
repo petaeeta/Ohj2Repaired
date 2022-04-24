@@ -18,12 +18,14 @@ import fi.jyu.mit.fxgui.Dialogs;
  * @author petteri
  * @version 29.3.2019
  * @version 23.4.2022
+ * @Version 24.4.2022
  *
  */
 public class Hahmobuildit implements Iterable<Hahmon_build> {
     private String tiedostoNimi = "hahmobuildit";
     private String profiiliNimi = "";
     private final Collection<Hahmon_build> taulukko = new ArrayList<Hahmon_build>();
+    private boolean muutettu = false;
     /**
      * konstruktori hahmon buildien tallentamiseksi
      */
@@ -67,6 +69,7 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
                 }
             }
             taulukko.add(lisattava);
+            muutettu = true;
         } catch (Exception e) {
             System.err.print("Odottamaton virhe tapahtui buildin luonnissa: " + e.getMessage() );
         }
@@ -84,9 +87,18 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
                 }
             }
             taulukko.add(lisattava);
+            muutettu = true;
         } catch (Exception e) {
             System.err.print("Odottamaton virhe tapahtui buildin luonnissa: " + e.getMessage() );
         }
+    }
+    
+    /**
+     * Palauttaa arvon perustuen siihen onko tallennuskriittisiä tiedostoja muutettu 
+     * @return muutettu-arvon
+    */
+    public boolean getMuutettu() {
+        return muutettu;
     }
     
     /**
@@ -133,7 +145,7 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
                 }
             }
         } catch (FileNotFoundException e) {
-            throw new SailoException("Ei saa luettua tiedostoa " + tiedostonNimi);
+            throw new SailoException("Tällä profiilinimellä ei ole aikaisempia tiedostoja, tai ne ovat tuhoutuneet. Ne luodaan kun tallennat tässä sessiossa.");
             
         }
         /*
@@ -167,6 +179,7 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
         } catch(Exception e) {
             throw new SailoException("Tiedosto " + tied.getAbsolutePath() + " ei aukea");
         }
+        muutettu = false;
     }
     
     /**
@@ -200,6 +213,55 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
             if (verrattava.getHid() == id ) loydetyt.add(verrattava.getBid());
         }
         return loydetyt;
+    }
+    
+    /**
+     * Poistaa tietyt hid-bid esiintymät.
+     * @param hid hahmon buildit jotka poistetaan
+     * @param bid hahmobuildin build-id joka poistetaan
+     */
+    public void poistaHahmonBuildit(int hid, int bid) {
+        Iterator<Hahmon_build> it = taulukko.iterator();
+        while (it.hasNext()) {
+            Hahmon_build poistettava = it.next();
+            if (poistettava.getHid() == hid && poistettava.getBid() == bid) {
+                it.remove();
+                muutettu = true;
+            }
+        }
+
+    }
+    
+    /**
+     * Poistaa kaikki hahmon buildit
+     * @param hid hahmon buildit jotka poistetaan
+     */
+    public void poistaHahmonBuildit(int hid) {
+        Iterator<Hahmon_build> it = taulukko.iterator();
+        while (it.hasNext()) {
+            Hahmon_build poistettava = it.next();
+            if (poistettava.getHid() == hid) {
+                it.remove();
+                muutettu = true;
+            }
+        }
+
+    }
+    
+    /**
+     * Poistaa kaikki buildin esiintymät
+     * @param bid hahmon buildit jotka poistetaan
+     */
+    public void poistaBuildit(int bid) {
+        Iterator<Hahmon_build> it = taulukko.iterator();
+        while (it.hasNext()) {
+            Hahmon_build poistettava = it.next();
+            if (poistettava.getBid() == bid) {
+                it.remove();
+                muutettu = true;
+            }
+        }
+
     }
 
     @Override

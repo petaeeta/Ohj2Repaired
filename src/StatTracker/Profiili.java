@@ -9,6 +9,7 @@ import java.util.List;
  * @author petteri
  * @version 29.3.2019
  * @version 21.4.2022
+ * @Version 24.4.2022
  *
  */
 public class Profiili {
@@ -16,16 +17,6 @@ public class Profiili {
     private Hahmot hahmot = new Hahmot();
     private Hahmobuildit hahmobuildit = new Hahmobuildit();
     private Buildit buildit = new Buildit();
-    
-    /**
-     * Poistaa Hahmotaulukosta ja buildeista ne, jotka on merkitty id:llä nro.
-     * @param nro viitenumero, jonka mukaan poistetaan
-     * @return montako hahmoa poistettiin
-     */
-    public int poista(int nro) {
-        return 0;
-        //TODO: Oikeasti poistaminen
-    }
     
     /**
      * Palauttaa hahmojen määrän
@@ -52,6 +43,14 @@ public class Profiili {
      */
     public Hahmo annaHahmo(int i) throws IndexOutOfBoundsException{
         return hahmot.anna(i);
+    }
+    
+    /**
+     * Palauttaa listan buildeja
+     * @return kaikki buildit
+     */
+    public List<Build> annaBuildit() {
+        return buildit.annaBuildit();
     }
     
     /**
@@ -173,16 +172,25 @@ public class Profiili {
         return hahmot.getOverallTilastot();
     }
     
+    
+    /**
+     * Kertoo onko tietoja muutettu
+     * @return true jos on, false jos ei
+     */
+    public boolean askMuutettu() {
+        return (hahmot.getMuutettu() || buildit.getMuutettu() || hahmobuildit.getMuutettu());
+    }
+    
     /**
      * Tallentaa tämänhetkiset tiedot tiedostoon
-     * @param tied profiilinimi jonne tallennetaan
      * @throws SailoException jos ei onnistu
      */
-    public void tallenna(String tied) throws SailoException {
-        setProfiili(tied);
-        hahmot.tallenna();
-        buildit.tallenna();
-        hahmobuildit.tallenna();
+    public void tallenna() throws SailoException {
+        if (askMuutettu()) {
+            hahmot.tallenna();
+            buildit.tallenna();
+            hahmobuildit.tallenna();
+        }
     }
     
     /**
@@ -229,6 +237,38 @@ public class Profiili {
         buildit.korvaaTaiLisaa(build);
         
     }
+    
+    /**
+     * Poistaa metodille annetun buildin
+     * @param build joka poistetaan
+     * @return 1 jos build poistettiin, 0 jos ei
+     */
+    public int poistaBuild(Build build) {
+       if ( build == null ) return 0;
+       hahmobuildit.poistaBuildit(build.getBid());
+        return buildit.poista(build.getBid());
+    }
+    
+    /**
+     * Poistaa metodille annetun hahmon
+     * @param hahmo joka poistetaan
+     * @return 1 jos hahmo poistettiin, 0 jos ei
+     */
+    public int poistaHahmo(Hahmo hahmo) {
+        if ( hahmo == null) return 0;
+        hahmobuildit.poistaHahmonBuildit(hahmo.getHid());
+        return hahmot.poista(hahmo.getHid());
+    }
+    
+    /**
+     * Poistaa spesifin hahmo-build relaation
+     * @param hahmo jonka spesifi build poistetaan
+     * @param build joka hahmolta poistetaan
+     */
+    public void poistaHahmonBuild(Hahmo hahmo, Build build) {
+        if (hahmo == null || build == null) return;
+        hahmobuildit.poistaHahmonBuildit(hahmo.getHid(), build.getBid());
+    }
 
     /**
      * Lukee tiedot profiilista jonka nimi annetaan parametrina
@@ -247,15 +287,11 @@ public class Profiili {
     }
     
     /**
-     * @param args ei käytössä
-     * @throws SailoException jos ei löydy
+     * Etsii kaikki hahmot joiden nimi sopeutuu hakuehtoon
+     * @param hakuehto nimi jolla etsitään
+     * @return Listan viitteistä hahmoihin
      */
-    public static void main(String[] args) throws SailoException {
-        Profiili profiili = new Profiili();
-        
-        profiili.lueTiedostosta("Esimerkkiprofiili");
-        profiili.tallenna("Profiili2");
-        
+    public List<Hahmo> etsi(String hakuehto) {
+        return hahmot.etsi(hakuehto);
     }
-
 }
