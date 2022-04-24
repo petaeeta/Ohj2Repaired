@@ -48,9 +48,9 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
      * Hahmon_build hb1 = new Hahmon_build(1, 3);
      * Hahmon_build hb2 = new Hahmon_build(1, 2);
      * 
-     * hahmobuildit.LisaaHahmolleBuild(1, 3);
-     * hahmobuildit.LisaaHahmolleBuild(1, 2);
-     * hahmobuildit.LisaaHahmolleBuild(2, 3);
+     * hahmobuildit.lisaaHahmolleBuild(1, 3);
+     * hahmobuildit.lisaaHahmolleBuild(1, 2);
+     * hahmobuildit.lisaaHahmolleBuild(2, 3);
      * 
      * List<Integer> vastaus = hahmobuildit.annaHahmonBuildit(1);
      * Iterator<Integer> it = vastaus.iterator();
@@ -182,29 +182,11 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
         muutettu = false;
     }
     
+
     /**
-     * 
-     * @param id hahmon id, jonka buildeja etsit‰‰n
-     * @return palauttaa listan, jossa on olioita, joille on merkitty sama hahmo-id.
-     * @example
-     * <pre name="test">
-     * 
-     * Hahmobuildit hahmobuildit = new Hahmobuildit();
-     * 
-     * Hahmon_build hb1 = new Hahmon_build(1, 3);
-     * Hahmon_build hb2 = new Hahmon_build(1, 2);
-     * 
-     * hahmobuildit.LisaaHahmolleBuild(1, 3);
-     * hahmobuildit.LisaaHahmolleBuild(1, 2);
-     * hahmobuildit.LisaaHahmolleBuild(2, 3);
-     * 
-     * List<Integer> vastaus = hahmobuildit.annaHahmonBuildit(1);
-     * Iterator<Integer> it = vastaus.iterator();
-     * it.next().equals(hb1);
-     * it.next().equals(hb2);
-     * it.hasNext() === false;
-     * 
-     * </pre>
+     * Antaa kaikki buildit joihin hahmo on kytketty
+     * @param id hahmon id jonka buildit haetaan
+     * @return Lista jossa kaikki hahmon buildit
      */
     public List<Integer> annaHahmonBuildit(int id){
         var loydetyt = new ArrayList<Integer>();
@@ -261,7 +243,6 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
                 muutettu = true;
             }
         }
-
     }
 
     @Override
