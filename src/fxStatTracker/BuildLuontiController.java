@@ -12,8 +12,6 @@ import javafx.stage.Stage;
  * Kontrolleri buildien luomiseen
  * @author petteri
  * @version 15.2.2019
- * @version 21.4.2022
- * @Version 24.4.2022
  *
  */
 public class BuildLuontiController implements ModalControllerInterface<Build> {
@@ -22,7 +20,7 @@ public class BuildLuontiController implements ModalControllerInterface<Build> {
     @FXML private TextField buildNimiField;
     @FXML private TextArea buildKuvausArea;
     
-    
+    // Tallentaa buildin.
     @FXML void handleBuildTallenna() {
         if ( buildKohdalla != null && buildKohdalla.getNimi().trim().equals("")) {
             Dialogs.showMessageDialog("Build tarvitsee v‰hint‰‰n nimen.");
@@ -36,18 +34,21 @@ public class BuildLuontiController implements ModalControllerInterface<Build> {
         ModalController.closeStage(tallenna);
     }
 
+    // Palauttaa dialogin tuloksen.
     @Override
     public Build getResult() {
         if ( buildKohdalla != null && buildKohdalla.getNimi().trim().equals("")) buildKohdalla = null;
         return buildKohdalla;
     }
 
+    // Fokusoi buildin luonti -ikkunan
     @Override
     public void handleShown() {
         buildNimiField.requestFocus();
         
     }
 
+    // Asettaa oletusnimen buildille
     @Override
     public void setDefault(Build oletus) {
         buildKohdalla = oletus;
@@ -69,8 +70,8 @@ public class BuildLuontiController implements ModalControllerInterface<Build> {
     
     /**
      * K‰sittelee tehdyt muutokset.
-     * @param edit tekstikentt‰ jota editoidaan
-     * @param k arvo joka kent‰lle halutaan
+     * @param edit tekstikentt‰ jota editoidaan.
+     * @param k arvo joka kent‰lle halutaan.
      */
     protected void kasitteleMuutosBuildiin(TextField edit, int k) {
             String s = edit.getText();
@@ -88,8 +89,8 @@ public class BuildLuontiController implements ModalControllerInterface<Build> {
     
     /**
      * K‰sittelee tehdyt muutokset.
-     * @param edit tekstikentt‰ jota editoidaan
-     * @param k arvo joka kent‰lle halutaan
+     * @param edit tekstikentt‰ jota editoidaan.
+     * @param k arvo joka kent‰lle halutaan.
      */
     protected void kasitteleMuutosBuildiin(TextArea edit, int k) {
         if (buildKohdalla == null) return;
@@ -107,9 +108,9 @@ public class BuildLuontiController implements ModalControllerInterface<Build> {
     }
     
     /**
-     * @param modalityStage mille ollaan modaalisia
-     * @param oletus mit‰ dataa k‰ytet‰‰n oletuksena
-     * @return null jos painetaan cancel, muuten uusi build
+     * @param modalityStage mille ollaan modaalisia.
+     * @param oletus mit‰ dataa k‰ytet‰‰n oletuksena.
+     * @return null jos painetaan cancel, muuten uusi build.
      */
     public static Build kysyBuild(Stage modalityStage, Build oletus) {
         return ModalController.showModal(StatTrackerGUIController.class.getResource("BuildLuontiGUIView.fxml"), "Buildin Tiedot", modalityStage, oletus);

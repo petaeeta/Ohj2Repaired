@@ -15,16 +15,15 @@ import fi.jyu.mit.ohj2.WildChars;
  * 
  * @author petteri
  * @version 29.3.2019
- * @Version 24.4.2022
  *
  */
 public class Hahmot {
-    private int lkm;
-    private int maxlkm = 8;
-    private Hahmo[] hahmot = new Hahmo[maxlkm];
-    private String profiiliNimi = "profiili";
-    private String tiedostoNimi = "hahmot";
-    private boolean muutettu = false;
+    private int lkm; // Hahmojen lukum‰‰r‰
+    private int maxlkm = 8; // Hahmojen alkuper‰inen maksimim‰‰r‰
+    private Hahmo[] hahmot = new Hahmo[maxlkm]; // Taulukko hahmoille
+    private String profiiliNimi = "profiili"; // K‰ytt‰j‰n profiilin nimi
+    private String tiedostoNimi = "hahmot"; // Tiedoston nimi, johon hahmot tallennetaan
+    private boolean muutettu = false; // Flag joka muutetaan trueksi, mik‰li hahmotietoja on muutettu
     
     /**
      * Hahmot luokan konstruktori, joka luo taulukon, jonne voi
@@ -34,7 +33,6 @@ public class Hahmot {
     public Hahmot() {
         
     }
-    
     
     /**
      * Metodi hahmojen lis‰‰miseksi taulukkoon 
@@ -62,7 +60,10 @@ public class Hahmot {
      * </pre>
      */
     public void lisaaHahmo(Hahmo hahmo) {
+        // Rekisterˆi hahmo, mik‰li hahmo-id:t‰ ei ole alustettu
         if (hahmo.getHid() < 0) hahmo.rekisteroi();
+        
+        // Kasvata taulukkoa mik‰li maksimim‰‰r‰ ylittyy
         if (lkm >= hahmot.length) {
             maxlkm += 20;
             Hahmo[] uusi = new Hahmo[maxlkm];
@@ -72,18 +73,21 @@ public class Hahmot {
             hahmot = uusi;
             muutettu = true;
         }
+        
+        // Lis‰‰ hahmo ensimm‰iseen tyhj‰‰n taulukon alkioon
         for (int i = 0; i < hahmot.length; i++) {
             if (hahmot[i] == null) {
                 hahmot[i] = hahmo;
                 lkm++;
                 muutettu = true;
                 return;
-                
             }
         }
     }
     
-    
+    /**
+     * toString-override, joka tulostaa kaikki listan hahmot n‰yttˆˆn
+     */
     @Override
     public String toString(){
         StringBuilder hahmot_rivit = new StringBuilder();
@@ -91,12 +95,11 @@ public class Hahmot {
             if (i == null) break;
             hahmot_rivit.append(i.getNimi() + "\n");
         }
-        
         return hahmot_rivit.toString();
     }
 
     /**
-     * palauttaa hahmojen lukum‰‰r‰n
+     * palauttaa hahmojen kokonaislukum‰‰r‰n
      * @return hahmojen lukum‰‰r‰
      */
     public int getLkm() {
@@ -110,20 +113,6 @@ public class Hahmot {
     public boolean getMuutettu() {
         return muutettu;
     }
-    
-    /**
-     * Laskee yhteen kaikkien hahmojen tilastot.
-     * @return paketin jossa on kaikkien hahmojen yhteenlasketut tilastot. Palautetaan Hahmo-oliona sill‰ Hahmo-oliosta lˆytyy kaikki tarvittavat attribuutit, oikeata hahmoa ei kuitenkaan luoda.
-     */
-    /*
-     * public Hahmo getOverallTilastot() { Hahmo hahmo = new Hahmo(false); for
-     * (Hahmo i : hahmot) { if (i == null) break;
-     * hahmo.setVoitot(hahmo.getVoitot() + i.getVoitot());
-     * hahmo.setHaviot(hahmo.getHaviot() + i.getHaviot());
-     * hahmo.setTapot(hahmo.getTapot() + i.getTapot());
-     * hahmo.setKuolemat(hahmo.getKuolemat() + i.getKuolemat()); } return hahmo;
-     * }
-     */
     
     /**
      * Laskee yhteen kaikkien hahmojen tilastot.
@@ -155,9 +144,8 @@ public class Hahmot {
         return stats;
     }
     
-    
     /**
-     * Palauttaa profiilin nimen
+     * Palauttaa profiilin nimen.
      * @return profiilin nimen
      */
     public String getProfiiliNimi() {
@@ -165,20 +153,18 @@ public class Hahmot {
     }
     
     /**
-     * Asettaa profiilin nimen
+     * Asettaa profiilin nimen.
      * @param nimi profiilin uusi nimi
      */
     public void setProfiiliNimi(String nimi) {
         profiiliNimi = nimi;
-        
     }
 
-
     /**
-     * Palauttaa viitteen i:teen hahmoon.
-     * @param i monennenko hahmon viite halutaan
-     * @return viite hahmoon, jonka indeksi on i
-     * @throws IndexOutOfBoundsException mik‰li i ei ole sallitulla alueella
+     * Palauttaa viitteen i:nteen hahmoon.
+     * @param i monennenko hahmon viite halutaan.
+     * @return viite hahmoon, jonka indeksi on i.
+     * @throws IndexOutOfBoundsException mik‰li i ei ole sallitulla alueella.
      * @example
      * <pre name="test">
      * #THROWS SailoException
@@ -197,7 +183,6 @@ public class Hahmot {
         return hahmot[i];
     }
     
-    
     /**
      * Tallentaa tiedot jo asetettuun tiedostonimeen
      * @throws SailoException jos tallennus ep‰onnistuu
@@ -207,8 +192,8 @@ public class Hahmot {
     }
     
     /**
-     * @param tiednimi tallennettavan tiedoston nimi
-     * @throws SailoException jos talletus ep‰onnistuu
+     * @param tiednimi tallennettavan tiedoston nimi.
+     * @throws SailoException jos talletus ep‰onnistuu.
      */
     public void tallenna(String tiednimi) throws SailoException {
         File tied = new File(tiednimi + "/" + tiedostoNimi + ".dat");
@@ -303,9 +288,6 @@ public class Hahmot {
         } catch (FileNotFoundException e) {
             throw new SailoException("T‰ll‰ profiilinimell‰ ei ole aikaisempia tiedostoja, tai ne ovat tuhoutuneet. Ne luodaan kun tallennat t‰ss‰ sessiossa.");
             
-        } /*
-           * catch (IOException e) { throw new
-           * SailoException("Ongelmia tiedoston kanssa: " + e.getMessage()); }
-           */
+        }
     }
 }

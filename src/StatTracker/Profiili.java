@@ -8,8 +8,6 @@ import java.util.List;
  * Profiili-luokka, joka yhdistelee buildien ja hahmojen tietoja.
  * @author petteri
  * @version 29.3.2019
- * @version 21.4.2022
- * @Version 24.4.2022
  *
  */
 public class Profiili {
@@ -25,7 +23,6 @@ public class Profiili {
     public int getHahmoMaara() {
         return hahmot.getLkm();
     }
-    
     
     /**
      * Palauttaa buildien m‰‰r‰n
@@ -63,7 +60,6 @@ public class Profiili {
         return buildit.anna(i);
     }
     
-    
     /**
      * Palauttaa id-numeroa vastaan viitteen buildiin, joka etsit‰‰n taulukosta
      * @param i id-numero jota vastaan build annetaan
@@ -89,7 +85,6 @@ public class Profiili {
      */
     public void LisaaHahmo(Hahmo hahmo) throws SailoException {
         hahmot.lisaaHahmo(hahmo);
-        
     }
     
     /**
@@ -107,7 +102,6 @@ public class Profiili {
      */
     public void LisaaHahmolleBuild(Hahmon_build hb) {
         hahmobuildit.lisaaHahmolleBuild(hb);
-        
     }
     
     /**
@@ -129,7 +123,6 @@ public class Profiili {
         buildit.tulostaBuildit(halutut, os);
     }
 
-    
     /**
      * Lis‰‰ buildin listaan
      * @param build joka listaan lis‰t‰‰n
@@ -158,20 +151,10 @@ public class Profiili {
      * Metodi v‰litt‰‰ tallennettujen hahmojen yhteenlasketut tilastot halutuille paikoilleen
      * @return paketin jossa on kaikkien hahmojen yhteenlasketut tilastot. Palautetaan Hahmo-oliona sill‰ Hahmo-oliosta lˆytyy kaikki tarvittavat attribuutit, oikeata hahmoa ei kuitenkaan luoda.
      */
-    /*
-     * public Hahmo getOverallTilastot() { if (hahmot.getLkm() < 1) return new
-     * Hahmo(false); return hahmot.getOverallTilastot(); }
-     */
-    
-    /**
-     * Metodi v‰litt‰‰ tallennettujen hahmojen yhteenlasketut tilastot halutuille paikoilleen
-     * @return paketin jossa on kaikkien hahmojen yhteenlasketut tilastot. Palautetaan Hahmo-oliona sill‰ Hahmo-oliosta lˆytyy kaikki tarvittavat attribuutit, oikeata hahmoa ei kuitenkaan luoda.
-     */
     public int[] getOverallTilastot() {
         if (hahmot.getLkm() < 1) return new int[4];
         return hahmot.getOverallTilastot();
     }
-    
     
     /**
      * Kertoo onko tietoja muutettu
@@ -209,7 +192,6 @@ public class Profiili {
         profiiliNimi = uusi;
     }
     
-    
     /**
      * Palauttaa profiilinimen
      * @return profiilinimen
@@ -217,7 +199,6 @@ public class Profiili {
     public String getProfiiliNimi() {
         return profiiliNimi;
     }
-    
     
     /**
      * Korvaa tai lis‰‰ hahmoa vastaan lˆytyneen hahmon

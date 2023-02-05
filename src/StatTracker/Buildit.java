@@ -13,23 +13,15 @@ import java.util.Scanner;
  * 
  * @author petteri
  * @version 29.3.2019
- * @Version 24.4.2022
  *
  */
 public class Buildit {
    private Build[] buildit = new Build[10];
-   private int maxlkm = 10; //käytetään vasta kun tietorakennetta kasvatetaan rajatta
+   private int maxlkm = 10;
    private int lkm;
    private String profiiliNimi = "profiili";
    private String tiedostoNimi = "buildit";
    private boolean muutettu = false;
-   
-   /**
-    * Konstruktori oletusbuilditaulukon luomiselle
-    */
-   public Buildit() {
-       
-   }
    
    /**
     * Metodi buildien lisäämiselle listaan
@@ -71,7 +63,6 @@ public class Buildit {
                lkm++;
                muutettu = true;
                return;
-               
            }
        }
    }
@@ -103,7 +94,6 @@ public class Buildit {
           if (vastaus == null) throw new SailoException("Etsittävää buildia id:llä " + i + " ei löytynyt");
           return vastaus;
       }
-      
       
      /**
      * palauttaa kaikki buildit
@@ -148,7 +138,6 @@ public class Buildit {
        profiiliNimi = uusi;
    }
    
-   
    /**
     * Lukee tiedoston jo asetetulla profiilinimellä
     * @throws SailoException jos ei löydy
@@ -156,7 +145,6 @@ public class Buildit {
    public void lueTiedostosta() throws SailoException {
        lueTiedostosta(getProfiiliNimi());
    }
-   
    
     /**
      * Lukee tiedoston halutusta paikasta
@@ -186,7 +174,6 @@ public class Buildit {
           */
    }
    
-   
     /**
      * Etsii korvattavan buildin. Jos ei löydy, lisää buildin.
     * @param build uusi lisättävä tai korvattava build
@@ -202,7 +189,6 @@ public class Buildit {
        }
        lisaaBuild(build);
        muutettu = true;
-       
    }
    
    /**
@@ -257,7 +243,6 @@ public class Buildit {
        return lkm;
    }
    
-   
    /**
     * Palauttaa arvon perustuen siihen onko tallennuskriittisiä tiedostoja muutettu 
     * @return muutettu-arvon
@@ -278,7 +263,5 @@ public class Buildit {
                if (x == osoitin.getBid()) osoitin.tulosta(os);
            }
        }
-    
-    
-}   
+   }   
 }

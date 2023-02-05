@@ -10,7 +10,6 @@ import fi.jyu.mit.ohj2.Mjonot;
  * 
  * @author petteri
  * @version 29.3.2019
- * @Version 24.4.2022
  *
  */
 public class Hahmo{
@@ -198,7 +197,6 @@ public class Hahmo{
         hid = rekisteroi();
     }
     
-    
     /**
      * Parametrillinen versio hahmosta, jolla on jo hid
      * @param hid hahmon hahmo-id
@@ -216,7 +214,6 @@ public class Hahmo{
         this.tapot = tapot;
         this.kuolemat = kuolemat;
     }
-    
     
     /** Luo koloonin itsestään
      * @return klooni
@@ -317,7 +314,6 @@ public class Hahmo{
     public void setHaviot(int uusi) {
        haviot = uusi;
     }
-
     
     /**
      * @param uusi päivitetty luku
@@ -325,7 +321,6 @@ public class Hahmo{
     public void setTapot(int uusi) {
         tapot = uusi;
     }
-    
     
     /**
      * @param uusi päivitetty luku
@@ -341,7 +336,6 @@ public class Hahmo{
     public void tulosta(PrintStream ps) {
         ps.println(hid + "\nNimi: " + nimi + "\nTapot: " + tapot + "\nKuolemat: " + kuolemat + "\nVoitot: " + voitot + "\nHäviöt: " + haviot + "\n");
     }
-    
 
     /**
      * Get-metodi hahmon tunnusnumeron saamiseksi
@@ -420,10 +414,8 @@ public class Hahmo{
         kuolemat = Mjonot.erota(sb, '|', kuolemat);
     }
     
-    
     @Override
     public String toString() {
         return "" + hid + "|" + nimi + "|" + voitot + "|" + haviot + "|" + tapot + "|" + kuolemat;
     }
-
 }

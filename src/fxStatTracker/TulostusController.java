@@ -11,7 +11,7 @@ import javafx.scene.web.WebEngine;
  * Tulostuksen hoitava luokka
  * 
  * @author petteri
- * @version 24.4.2022
+ * @version 15.2.2019
  */
 public class TulostusController implements ModalControllerInterface<String> {
     @FXML TextArea tulostusAlue;
@@ -50,7 +50,7 @@ public class TulostusController implements ModalControllerInterface<String> {
      */
     @Override
     public void handleShown() {
-        //
+        // ei mit‰‰n
     }
     
     

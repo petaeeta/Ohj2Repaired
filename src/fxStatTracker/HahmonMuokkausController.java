@@ -15,8 +15,6 @@ import javafx.stage.Stage;
  * Kontrolleri hahmon tilastojen muokkaamiselle
  * @author petteri
  * @version 15.2.2019
- * @version 21.4.2022
- * @version 24.4.2022
  *
  */
 public class HahmonMuokkausController implements ModalControllerInterface<Hahmo> {
@@ -27,7 +25,6 @@ public class HahmonMuokkausController implements ModalControllerInterface<Hahmo>
     @FXML private Label labelVirhe;
 
     @FXML void handleHahmonTilastoTallennus() {
-        
         if ( hahmoKohdalla != null && hahmoKohdalla.getNimi().trim().equals("")) {
             naytaVirhe("Nimi ei saa olla tyhjä");
             return;

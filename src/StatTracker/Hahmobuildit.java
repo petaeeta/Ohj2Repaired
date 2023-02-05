@@ -17,8 +17,6 @@ import fi.jyu.mit.fxgui.Dialogs;
  * Luokka taulukolle, johon on tallennettu hahmojen buildeja
  * @author petteri
  * @version 29.3.2019
- * @version 23.4.2022
- * @Version 24.4.2022
  *
  */
 public class Hahmobuildit implements Iterable<Hahmon_build> {
@@ -125,7 +123,6 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
         lueTiedostosta(getProfiiliNimi());
     }
     
-    
      /**
       * Lukee tiedoston halutusta paikasta
       * @param hakemisto josta tiedosto luetaan
@@ -146,12 +143,7 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
             }
         } catch (FileNotFoundException e) {
             throw new SailoException("Tällä profiilinimellä ei ole aikaisempia tiedostoja, tai ne ovat tuhoutuneet. Ne luodaan kun tallennat tässä sessiossa.");
-            
         }
-        /*
-           * catch (IOException e) { throw new
-           * SailoException("Ongelmia tiedoston kanssa: " + e.getMessage()); }
-           */
     }
     
     /**
@@ -182,7 +174,6 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
         muutettu = false;
     }
     
-
     /**
      * Antaa kaikki buildit joihin hahmo on kytketty
      * @param id hahmon id jonka buildit haetaan
@@ -211,7 +202,6 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
                 muutettu = true;
             }
         }
-
     }
     
     /**
@@ -227,7 +217,6 @@ public class Hahmobuildit implements Iterable<Hahmon_build> {
                 muutettu = true;
             }
         }
-
     }
     
     /**

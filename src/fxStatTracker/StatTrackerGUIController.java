@@ -26,8 +26,6 @@ import javafx.scene.layout.GridPane;
  * kontrolleri StatTrackerin p‰‰ikkunalle
  * @author petteri
  * @version 14.2.2019
- * @version 22.4.2022
- * @version 1.0 24.4.2022
  *
  */
 public class StatTrackerGUIController implements Initializable {
@@ -204,6 +202,7 @@ public class StatTrackerGUIController implements Initializable {
         alusta();
     }
 
+    // Alustaa applikaation etusivun elementit.
     private void alusta() {
         panelHahmo.setFitToHeight(true);
         panelBuild.setFitToHeight(true);
@@ -235,7 +234,7 @@ public class StatTrackerGUIController implements Initializable {
     }
     
     /**
-     * Avataan harkkatyˆn suunnitelma
+     * Avaa harjoitustyˆn suunnitelman
      */
     private void avaaApu() {
         Desktop desktop = Desktop.getDesktop();
@@ -250,7 +249,7 @@ public class StatTrackerGUIController implements Initializable {
     }
     
     /*
-     * Tallentaa tiedot levylle
+     * Tallentaa profiilin tiedot levylle.
      */
     private void tallenna() {
         try {
@@ -260,9 +259,8 @@ public class StatTrackerGUIController implements Initializable {
         }
     }
     
-     
     /*
-     * Laittaa hahmon tiedot kenttiin
+     * Laittaa hahmon tiedot hahmokenttiin
      */
     private void laitaHahmo() {
         hahmoKohdalla = chooserHahmot.getSelectedObject();
@@ -282,7 +280,7 @@ public class StatTrackerGUIController implements Initializable {
     }
     
     /*
-     * Poistaa hahmolta h‰nelle assignatun buildin
+     * Poistaa hahmolta assignatun buildin
      */
     private void poistaHahmonBuild() {
         hahmobuildKohdalla = chooserHahmoBuildit.getSelectedObject();
@@ -300,7 +298,7 @@ public class StatTrackerGUIController implements Initializable {
     }
     
     /*
-     * Poistaa hahmon kokonaan
+     * Poistaa valitun hahmon kokonaan
      */
     private void poistaHahmo() {
         hahmoKohdalla = chooserHahmot.getSelectedObject();
@@ -316,7 +314,7 @@ public class StatTrackerGUIController implements Initializable {
     }
     
     /*
-     * Poistaa buildin kokonaan
+     * Poistaa valitun buildin kokonaan
      */
     private void poistaBuild() {
         buildKohdalla = chooserBuildit.getSelectedObject();
@@ -329,7 +327,7 @@ public class StatTrackerGUIController implements Initializable {
     }
     
     /*
-     * Tyhjent‰‰ hahmon tekstikent‰t
+     * Tyhjent‰‰ hahmon tiedot kentist‰
      */
     private void clearHahmoFields() {
         for (TextField edit : edits) {
@@ -338,7 +336,7 @@ public class StatTrackerGUIController implements Initializable {
     }
     
     /*
-     * Metodi jolla muokataan olemassaolevaa hahmoa
+     * Metodi jolla muokataan olemassaolevan hahmon tietoja
      */
     private void avaaHahmonMuokkaus() {
         try {
@@ -374,10 +372,8 @@ public class StatTrackerGUIController implements Initializable {
         }
     }
     
-    
-    
     /*
-     * P‰ivitt‰‰ overall-tilastot
+     * P‰ivitt‰‰ overall-tilastot uudelleenrenderˆimist‰ varten
      */
     private void updateOverall() {
         int[] tilastot = profiili.getOverallTilastot();
@@ -441,7 +437,7 @@ public class StatTrackerGUIController implements Initializable {
     }
     
     /**
-     * N‰ytt‰‰ buildit joissa hahmo on mukana
+     * N‰ytt‰‰ buildit jotka hahmolle kuuluu
      */
     protected void naytaBuild() {
         buildKohdalla = chooserBuildit.getSelectedObject();
@@ -466,7 +462,7 @@ public class StatTrackerGUIController implements Initializable {
     }
 
     /**
-     * N‰ytt‰‰ hahmon tiedot joka on t‰ll‰ hetkell‰ valittuna
+     * N‰ytt‰‰ valitun hahmon tiedot
      */
     protected void naytaHahmo() {
         hahmoKohdalla = chooserHahmot.getSelectedObject();
@@ -498,19 +494,11 @@ public class StatTrackerGUIController implements Initializable {
                 Dialogs.showMessageDialog(e.getMessage());
             }
         }
-        
-        /*
-         * areaHahmo.setText(""); try (PrintStream os =
-         * TextAreaOutputStream.getTextPrintStream(areaHahmo)){
-         * hahmoKohdalla.tulosta(os); } areaBuild.setText(""); try (PrintStream
-         * os = TextAreaOutputStream.getTextPrintStream(areaBuild)){ hid =
-         * hahmoKohdalla.getHid(); List<Integer> buildit =
-         * profiili.annaHahmonBuildit(hid); if (buildit.isEmpty()) return;
-         * profiili.tulostaBuildit(buildit, os); }
-         */
-        
     }
     
+    /**
+     * Default-funktio, joka hakee hahmojen tiedot listaan
+     */
     private void haeHahmot() {
         if (chooserHahmot.getSelectedObject() != null)haeHahmot(chooserHahmot.getSelectedObject().getHid());
     }
@@ -531,8 +519,8 @@ public class StatTrackerGUIController implements Initializable {
         
         /*
          * Sorttaa hakujen perusteella listan. Ilman rajapintoja pit‰‰ tehd‰ n‰in,
-         * sill‰ haluan sortata hahmoa kolmen eri muuttujatyypin perusteella, String jos nimi, int jos perus-statistiikka.
-         * K/D sek‰ W/L myˆs ilmoitetaan kaikkialla double-muodossa, joten ne j‰rjestet‰‰n ihan tavallisella v‰hennyslaskulla
+         * sill‰ haluan sortata hahmoa kolmen eri muuttujatyypin perusteella, String jos nimi, Int jos perus-statistiikka,
+         * Double jos suhdeluku.
          */
         Collections.sort(vastaus, new Comparator<Hahmo>() {
             @Override
@@ -552,6 +540,7 @@ public class StatTrackerGUIController implements Initializable {
             }
         });
         
+        // Asettaa sortatun hahmon tiedot UI-listaan
         int i = 0;
         for (Hahmo hahmo : vastaus) {
             if (hahmo.getHid() == tunnusNro) index = i;

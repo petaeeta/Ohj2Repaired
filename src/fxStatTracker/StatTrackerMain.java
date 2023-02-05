@@ -12,9 +12,6 @@ import StatTracker.*;
 /**
  * @author petteri
  * @version 14.2.2019
- * @version 21.4.2022
- * @Version 24.4.2022
- *
  */
 public class StatTrackerMain extends Application {
     @Override

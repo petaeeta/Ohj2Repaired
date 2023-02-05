@@ -8,8 +8,6 @@ import fi.jyu.mit.ohj2.Mjonot;
  * Luokka build-olioiden luomiselle.
  * @author petteri
  * @version 29.3.2019
- * @version 22.4.2022
- * @Version 24.4.2022
  *
  */
 public class Build {
@@ -19,7 +17,7 @@ public class Build {
     private static int seuraava_bid = 1;
     
     /**
-     * Konstruktori oletusbuildin luomiselle.
+     * Konstruktori oletusbuildin luomiselle, testitarkoitukseen.
      */
     public Build() {
         bid = rekisteroi();
@@ -61,7 +59,6 @@ public class Build {
         return bid;
     }
     
-    
     /**
      * Asettaa build id:n
      * @param uusi build id
@@ -70,7 +67,6 @@ public class Build {
         bid = uusi;
         if (bid >= seuraava_bid) seuraava_bid = bid + 1;
     }
-    
     
     /**
      * Get-metodi seuraavan luotavan buildin id-numerolle. Luotu l‰hinn‰ Junit-testeille ettei tarvitse pit‰‰ seuraava_bid attribuuttia public n‰kyvyydell‰.
@@ -154,9 +150,8 @@ public class Build {
         return kuvaus;
     }
 
-
     /**
-     * Osaa parsia buildin tiedot tiedostosta
+     * Parsii buildin tiedot tiedostosta
      * @param rivi josta tiedot luetaan
      */
     public void parse(String rivi) {
@@ -164,9 +159,9 @@ public class Build {
         setBid(Mjonot.erota(sb, '|', getBid()));
         nimi = Mjonot.erota(sb, '|', nimi);
         kuvaus = Mjonot.erota(sb, '|', kuvaus);
-        
     }
     
+    // Palauttaa buildin tiedot tiedostoon kirjoitettavassa muodossa
     @Override
     public String toString() {
         return "" + bid + "|" + nimi + "|" + kuvaus;
