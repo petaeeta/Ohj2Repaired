@@ -1,6 +1,3 @@
-# pohja
+# Pohja
 
-Pohja kevään 2022 harjoitustöiden GIT-repoille
-
-Lue käyttöohjeet TIMistä: <https://tim.jyu.fi/view/kurssit/tie/ohj2/tyokalut/git/ohj2git#fork>
-
+Javalla toteutettu harjoitustyö vuoden 2019 ohjelmointi 2 -kurssille
