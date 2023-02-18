@@ -35,7 +35,7 @@
             </Label>
          </center>
          <bottom>
-            <Label text="Author: Petteri Taro; Version 24.4.2022" BorderPane.alignment="CENTER">
+            <Label text="Author: Petteri Taro; Version 14.2.2019" BorderPane.alignment="CENTER">
                <font>
                   <Font size="14.0" />
                </font>
